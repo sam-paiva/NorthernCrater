@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var showSaves = false
     @State private var showSettings = false
     @State private var showControls = false
+    @State private var updates = UpdateChecker.shared
     
     /// The native open panel for mods: .iro files, or unpacked mod folders, several at once.
     private func chooseMods(folders: Bool) {
@@ -129,6 +130,35 @@ struct ContentView: View {
         }
         .fileImporter(isPresented: $showFolderPicker, allowedContentTypes: [.folder]) { result in
             if case .success(let url) = result { viewModel.selectSteamFolder(url) }
+        }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if let release = updates.available {
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.down.circle.fill").foregroundStyle(.tint)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("NorthernCrater \(release.version) is available (you have \(updates.currentVersion))")
+                            .font(.callout.weight(.semibold))
+                        Text("Download it, replace the app, then press Rebuild Engine if the release notes say the engine changed.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button("Skip This Version") { updates.skip(release) }
+                    Button("Download") { updates.openDownloadPage(release) }
+                        .buttonStyle(.borderedProminent)
+                }
+                .padding(.horizontal, 16).padding(.vertical, 8)
+                .background(.bar)
+                .overlay(alignment: .bottom) { Divider() }
+            }
+        }
+        .task { await updates.checkInBackground() }
+        .alert("Updates", isPresented: Binding(
+            get: { updates.manualResult != nil },
+            set: { if !$0 { updates.manualResult = nil } })
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(updates.manualResult ?? "")
         }
         .alert("Some mods were not added", isPresented: Binding(
             get: { !viewModel.importIssues.isEmpty },
