@@ -132,8 +132,8 @@ private struct CatalogModRow: View {
                 HStack(spacing: 8) {
                     VStack(alignment: .trailing, spacing: 4) {
                         ProgressView(value: progress)
-                            .frame(width: 90)
-                        Text(isPaused ? "Paused • \(Int(progress * 100))%" : "\(Int(progress * 100))%")
+                            .frame(width: 150)
+                        Text((isPaused ? "Paused • " : "") + progressText(progress))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
@@ -159,6 +159,17 @@ private struct CatalogModRow: View {
             }
         }
         .padding(.vertical, 4)
+    }
+    
+    /// "0.7% • 20 MB of 2.8 GB": a big mod on a slow mirror would sit at "1%" and look stuck.
+    private func progressText(_ progress: Double) -> String {
+        let percent = progress < 0.1 ? String(format: "%.1f%%", progress * 100) : "\(Int(progress * 100))%"
+        guard let kb = mod.fileSizeKB, kb > 0 else { return percent }
+        let total = Int64(kb) * 1024
+        let done = Int64(progress * Double(total))
+        let f = ByteCountFormatter()
+        f.countStyle = .file
+        return "\(percent) • \(f.string(fromByteCount: done)) of \(f.string(fromByteCount: total))"
     }
     
     private var formattedSize: String {
