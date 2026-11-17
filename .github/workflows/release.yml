@@ -1,0 +1,35 @@
+# Builds and publishes a release when you push a version tag (git tag v1.0 && git push origin v1.0).
+# It runs scripts/make_release.sh on a GitHub-hosted Apple Silicon Mac (macos-26, Xcode 26.6), which packs the
+# .dmg, .zip and .sha256 and creates the GitHub release with them.
+# "Run workflow" (manual) builds and checks everything but does not publish anything.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write        # needed to create the release; the workflow has no other access and no secrets
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show the toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+
+      - name: Build and pack (and publish, for tags)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            ./scripts/make_release.sh "${GITHUB_REF_NAME}" --publish
+          else
+            ./scripts/make_release.sh
+          fi

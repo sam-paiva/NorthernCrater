@@ -352,7 +352,7 @@ The `mods` folder holds links to your mods plus `profile.xml`. The app only crea
 - `CLAUDE.md` is a detailed technical guide to how the pieces fit, the mod and save formats, the engine changes and known issues.
 - `engine/NOTICE.md` lists exactly what was copied from GJ Materia, what was left out and what was changed.
 - Updating the engine means re-vendoring it from GJ Materia and re-applying the changes listed in `engine/NOTICE.md`.
-- **Making a release:** `scripts/make_release.sh [version]` builds an arm64 Release, checks it, and writes a `.dmg`, a `.zip` and a `.sha256` file to `dist/`. See [`docs/RELEASING.md`](docs/RELEASING.md) for publishing it.
+- **Making a release:** push a version tag (`git tag v1.0 && git push origin v1.0`) and a GitHub Action builds and publishes it, or run `scripts/make_release.sh [version]` yourself. See [`docs/RELEASING.md`](docs/RELEASING.md).
 
 ## Credits and license
 
