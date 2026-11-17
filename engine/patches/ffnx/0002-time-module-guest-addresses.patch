@@ -1,0 +1,71 @@
+FF7 on macOS (NorthernCrater): the day/night time module reads its variables from game addresses given as
+hex strings in a config. With the guest memory at an offset (arm64), those raw addresses must be converted
+with GPTR(), or the first access faults (seen with mods that enable enable_time_cycle).
+
+--- a/src/ff7/time.cpp
++++ b/src/ff7/time.cpp
+@@ -89,56 +89,56 @@
+         if(optionAddressStr.has_value())
+         {
+             auto str = optionAddressStr.value();
+-            pOptions = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pOptions = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto minutesAddressStr = config["minutes_address"].value<std::string>();
+         if(minutesAddressStr.has_value())
+         {
+             auto str = minutesAddressStr.value();
+-            pMinutes = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pMinutes = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto hoursAddressStr = config["hours_address"].value<std::string>();
+         if(hoursAddressStr.has_value())
+         {
+             auto str = hoursAddressStr.value();
+-            pHours = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pHours = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto daysAddressStr = config["days_address"].value<std::string>();
+         if(daysAddressStr.has_value())
+         {
+             auto str = daysAddressStr.value();
+-            pDays = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pDays = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto monthsAddressStr = config["months_address"].value<std::string>();
+         if(monthsAddressStr.has_value())
+         {
+             auto str = monthsAddressStr.value();
+-            pMonths = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pMonths = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto monthChar0AddressStr = config["month_char_0_address"].value<std::string>();
+         if(monthChar0AddressStr.has_value())
+         {
+             auto str = monthChar0AddressStr.value();
+-            pMonthChar0 = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pMonthChar0 = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto monthChar1AddressStr = config["month_char_1_address"].value<std::string>();
+         if(monthChar1AddressStr.has_value())
+         {
+             auto str = monthChar1AddressStr.value();
+-            pMonthChar1 = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pMonthChar1 = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         auto monthChar2AddressStr = config["month_char_2_address"].value<std::string>();
+         if(monthChar2AddressStr.has_value())
+         {
+             auto str = monthChar2AddressStr.value();
+-            pMonthChar2 = (byte*)(std::strtol(str.data(), nullptr, 16));
++            pMonthChar2 = (byte*)GPTR(std::strtol(str.data(), nullptr, 16));
+         }
+ 
+         for (int i = 0; i < 12; ++i)

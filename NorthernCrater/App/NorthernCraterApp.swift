@@ -1,0 +1,21 @@
+//
+//  NorthernCraterApp.swift
+//  NorthernCrater
+//
+
+import SwiftUI
+
+@main
+struct NorthernCraterApp: App {
+    init() {
+        try? AppPaths.ensureDirectoriesExist()
+    }
+    
+    var body: some Scene {
+        WindowGroup("NorthernCrater") {
+            ContentView()
+                .frame(minWidth: 860, minHeight: 560)
+        }
+        .defaultSize(width: 1020, height: 660)
+    }
+}

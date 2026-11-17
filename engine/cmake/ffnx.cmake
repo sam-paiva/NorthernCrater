@@ -1,0 +1,172 @@
+# FFNx compiled for the lifted game on Android (see docs/FFNX_PORT.md).
+#
+#   ffnx  STATIC  FFNx's own sources (external/FFNx/src, with tools/ffnx_port.py applied)
+#                 against src/ffnx_port/include (Win32/DirectX shims in 32-bit layout)
+#
+# FFNX_SOURCES is the list of FFNx files ported so far; it grows module by module.
+# Set FF7_ROOT and include cmake/bgfx.cmake first.
+
+set(FFNX_DIR  "${FF7_ROOT}/external/FFNx")
+set(FFNX_SRC  "${FFNX_DIR}/src")
+set(FFNX_DEPS "${FF7_ROOT}/external/deps")
+
+include("${FFNX_DEPS}/cmrc/CMakeRC.cmake")
+cmrc_add_resource_library(ffnx-resources ALIAS ffnx::rc NAMESPACE FFNx WHENCE "${FFNX_DIR}"
+  "${FFNX_DIR}/.logo/logo_nobg.png")
+set_target_properties(ffnx-resources PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+# Header layout FFNx expects from vcpkg: <libpng16/png.h>, <libvgmstream/vgmstream.h>.
+set(FFNX_GEN_INC "${CMAKE_BINARY_DIR}/ffnx_include")
+file(MAKE_DIRECTORY "${FFNX_GEN_INC}/libpng16" "${FFNX_GEN_INC}/libvgmstream")
+configure_file("${FFNX_DEPS}/libpng/png.h" "${FFNX_GEN_INC}/libpng16/png.h" COPYONLY)
+configure_file("${FFNX_DEPS}/libpng/pngconf.h" "${FFNX_GEN_INC}/libpng16/pngconf.h" COPYONLY)
+configure_file("${FFNX_DEPS}/libpng/scripts/pnglibconf.h.prebuilt" "${FFNX_GEN_INC}/libpng16/pnglibconf.h" COPYONLY)
+# FFNx's vgmstream port installs the *internal* src/vgmstream.h (VGMSTREAM, sample_t) as
+# <libvgmstream/vgmstream.h> (.vcpkg/ports/vgmstream/cmake.patch).
+foreach(pair "vgmstream.h=vgmstream.h" "vgmstream_types.h=vgmstream_types.h" "plugins.h=base/plugins.h"
+             "util.h=util.h" "util/log.h=util/log.h" "util/reader_get.h=util/reader_get.h"
+             "util/reader_put.h=util/reader_put.h" "util/vgmstream_limits.h=util/vgmstream_limits.h"
+             "streamtypes.h=streamtypes.h" "streamfile.h=streamfile.h" "coding/g72x_state.h=coding/g72x_state.h")
+  string(REPLACE "=" ";" kv "${pair}")
+  list(GET kv 0 dst)
+  list(GET kv 1 src)
+  get_filename_component(dst_dir "${FFNX_GEN_INC}/libvgmstream/${dst}" DIRECTORY)
+  file(MAKE_DIRECTORY "${dst_dir}")
+  file(WRITE "${FFNX_GEN_INC}/libvgmstream/${dst}" "#pragma once\n#include \"${FFNX_DEPS}/vgmstream/src/${src}\"\n")
+endforeach()
+
+if(NOT DEFINED FFNX_SOURCES)
+  # All of FFNx's FF7 side. Left out: FF8-only code (ff8 is a runtime flag, always false
+  # here), FFNx's own patch.cpp (replaced by src/ffnx_port/patch_recomp.cpp), the Windows
+  # crash dialog (crashdump.cpp; crashes are reported by src/host/ff7_crash.c), DirectInput/
+  # WMI joystick enumeration (joystick.cpp; controllers come through XInput here), and the
+  # FFmpeg movie player (video/*) until FFmpeg is built. Their symbols are named stops
+  # (tools/ffnx_link_stubs.py).
+  file(GLOB_RECURSE FFNX_SOURCES RELATIVE "${FFNX_SRC}" "${FFNX_SRC}/*.cpp" "${FFNX_SRC}/*.c")
+  list(FILTER FFNX_SOURCES EXCLUDE REGEX "^(ff8/|ff8_|fake_dd\\.cpp$|patch\\.cpp$|crashdump\\.cpp$|joystick\\.cpp$|video/)")
+endif()
+
+# FFmpeg (tools/build_ffmpeg_android.sh): FFNx's movie player and NTSC-J gamut code.
+if(APPLE)
+  if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+    set(FF7_FFMPEG_DIR "${FF7_ROOT}/build/ffmpeg-mac-arm64")   # FF7_ARCH=arm64 tools/build_ffmpeg_mac.sh
+  else()
+    set(FF7_FFMPEG_DIR "${FF7_ROOT}/build/ffmpeg-mac")      # tools/build_ffmpeg_mac.sh
+  endif()
+else()
+  set(FF7_FFMPEG_DIR "${FF7_ROOT}/build/ffmpeg-android")
+endif()
+if(EXISTS "${FF7_FFMPEG_DIR}/lib/libavcodec.a")
+  set(FF7_HAVE_FFMPEG ON)
+  list(APPEND FFNX_SOURCES "video/movies.cpp" "video/ntscj.cpp")
+  set(FF7_FFMPEG_INC "${FF7_FFMPEG_DIR}/include")
+else()
+  set(FF7_HAVE_FFMPEG OFF)
+  set(FF7_FFMPEG_INC "${FF7_ROOT}/src/ffnx_port/include_stub_ffmpeg")
+  message(WARNING "FFmpeg not built (tools/build_ffmpeg_android.sh): movies are named stops")
+endif()
+list(TRANSFORM FFNX_SOURCES PREPEND "${FFNX_SRC}/")
+
+# rcheevos (RetroAchievements' evaluation library, MIT; tools/fetch_deps.sh): the runtime only,
+# offline (src/ffnx_port/achievements.cpp)
+set(FF7_RC_DIR "${FFNX_DEPS}/rcheevos")
+file(GLOB FF7_RC_SOURCES "${FF7_RC_DIR}/src/rcheevos/*.c")
+add_library(ff7_rcheevos STATIC ${FF7_RC_SOURCES} "${FF7_RC_DIR}/src/rc_compat.c" "${FF7_RC_DIR}/src/rc_util.c"
+            "${FF7_RC_DIR}/src/rhash/md5.c")
+target_include_directories(ff7_rcheevos PUBLIC "${FF7_RC_DIR}/include")
+target_compile_definitions(ff7_rcheevos PUBLIC RC_DISABLE_LUA)
+set_target_properties(ff7_rcheevos PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+add_library(ffnx STATIC ${FFNX_SOURCES}
+  # 32-bit layout proof for every game struct (tools/ffnx_layout_check.py)
+  "${FF7_ROOT}/src/ffnx_port/layout_asserts.cpp"
+  # FFNx's patch API with recomp semantics (replaces FFNx's patch.cpp)
+  "${FF7_ROOT}/src/ffnx_port/patch_recomp.cpp"
+  "${FF7_ROOT}/src/ffnx_port/quickboot.cpp"
+  "${FF7_ROOT}/src/ffnx_port/savestate_ffnx.cpp"
+  "${FF7_ROOT}/src/ffnx_port/companion.cpp"
+  "${FF7_ROOT}/src/ffnx_port/companion_render.cpp"
+  "${FF7_ROOT}/src/ffnx_port/boosters.cpp"
+  "${FF7_ROOT}/src/ffnx_port/rumble.cpp"
+  "${FF7_ROOT}/src/ffnx_port/achievements.cpp"
+  # the Steam client FFNx's achievement code talks to, as files shared with the app
+  "${FF7_ROOT}/src/ffnx_port/steam_android.cpp"
+  # platform helpers for FFNx's Android branches; FFNx's own Win32 calls
+  "${FF7_ROOT}/src/ffnx_port/android_window.cpp"
+  "${FF7_ROOT}/src/ffnx_port/win32_compat.cpp"
+  "${FF7_ROOT}/src/ffnx_port/ffnx_hash.cpp"
+  # SDL3 gamepads and DirectInput joystick as "no device" (pads come through XInput)
+  "${FF7_ROOT}/src/ffnx_port/input_android.cpp"
+  # DllMain at boot; FFNx's new_dll_graphics_driver exported to the game
+  "${FF7_ROOT}/src/ffnx_port/ffnx_boot.cpp"
+  # fixed guest block for FFNx globals the game reads
+  "${FF7_ROOT}/src/ffnx_port/ffnx_guest_static.cpp")
+# FFNx code left out of this build (FF8-only, crash dialog): named stops, generated by
+# tools/ffnx_link_stubs.py from the link census (which is taken without them).
+if(APPLE)   # the same stubs with Mach-O symbol names (src/mac/link_stubs_mac.cpp)
+  target_sources(ffnx PRIVATE "${FF7_ROOT}/src/mac/link_stubs_mac.cpp")
+elseif(EXISTS "${FF7_ROOT}/src/ffnx_port/link_stubs.cpp" AND NOT FFNX_LINK_PROBE)
+  target_sources(ffnx PRIVATE "${FF7_ROOT}/src/ffnx_port/link_stubs.cpp")
+endif()
+target_include_directories(ffnx BEFORE PUBLIC
+  "${FF7_ROOT}/src/ffnx_port/include"           # Win32/DirectX shims first
+  "${FF7_FFMPEG_INC}"
+  "${FF7_ROOT}/src/ffnx_bridge"
+  "${FFNX_SRC}"
+  "${FFNX_DEPS}/tomlplusplus/include"
+  "${FFNX_DEPS}/imgui"
+  "${FFNX_DEPS}/xxhash"
+  "${FFNX_GEN_INC}"
+  "${FFNX_DEPS}/SDL3/include"
+  "${FFNX_DEPS}/pugixml/src"
+  "${FFNX_DEPS}/soloud/include")
+target_compile_definitions(ffnx PUBLIC
+  VERSION="1.25.2-ff7recomp"
+  DIRECTINPUT_VERSION=0x0800
+  NOMINMAX
+  FFNX_ANDROID=1
+  $<$<BOOL:${APPLE}>:FF7_MACOS=1>)
+target_compile_options(ffnx PRIVATE
+  "SHELL:-include ${FF7_ROOT}/src/ffnx_port/include/ffnx_prelude.h"
+  # MSVC semantics FFNx relies on: null checks after arithmetic on possibly-null game
+  # pointers (&p->array[i] then `if (ptr)`) and type punning between game structs.
+  -fno-delete-null-pointer-checks -fno-strict-aliasing
+  # char is signed on x86 and unsigned on arm64: game structs hold signed bytes as `char`
+  # (field shake offsets: -1 read as 255 moved the background 256 px every other frame, #20)
+  -fsigned-char
+  -ferror-limit=0 -fms-extensions -Wno-microsoft -Wno-invalid-offsetof -Wno-writable-strings
+  -Wno-unused-value -Wno-format -Wno-c++11-narrowing-const-reference)
+target_compile_features(ffnx PUBLIC cxx_std_20)
+set_target_properties(ffnx PROPERTIES POSITION_INDEPENDENT_CODE ON)
+include("${FF7_ROOT}/cmake/ffnx_deps.cmake")
+include("${FF7_ROOT}/cmake/ffnx_audio.cmake")
+target_include_directories(ffnx PRIVATE "${FFNX_DEPS}/cgltf" "${FF7_ROOT}/src/interp" "${FF7_ROOT}/src/host")
+target_link_libraries(ffnx PUBLIC ff7_core bgfx ff7_rcheevos ffnx::rc ffnx_png ffnx_imgui ffnx_pugixml ffnx_xxhash
+  ffnx_soloud ffnx_vgmstream ffnx_openpsf ffnx_lz4)
+if(FF7_HAVE_FFMPEG)
+  target_compile_definitions(ffnx PRIVATE FF7_HAVE_FFMPEG=1)
+  foreach(lib avformat avcodec swscale swresample avutil)
+    target_link_libraries(ffnx PUBLIC "${FF7_FFMPEG_DIR}/lib/lib${lib}.a")
+  endforeach()
+  target_link_libraries(ffnx PUBLIC z m)
+  # FFmpeg's aarch64 assembly addresses its tables with adrp/add, which a shared library
+  # cannot do against exported (preemptible) symbols: keep static libraries' symbols local.
+  if(NOT APPLE)
+    target_link_options(ffnx INTERFACE "-Wl,--exclude-libs,ALL")
+  endif()
+endif()
+# FFNx defines globals in headers and links with /FORCE:MULTIPLE (its CMakeLists.txt):
+# one definition is kept and every reference binds to it. lld's equivalent:
+if(NOT APPLE)
+  target_link_options(ffnx INTERFACE "-Wl,--allow-multiple-definition")
+endif()
+
+# Link check: an executable over the FFNx core, to list what the unported modules still
+# owe (tools/ffnx_link_stubs.py turns the undefined symbols into named stops).
+if(FFNX_LINK_PROBE)
+  add_executable(ffnx_link_probe "${FF7_ROOT}/src/host/ff7_headless_main.c")
+  # Whole archive: nothing in main references FFNx, so the linker would drop it all.
+  target_link_libraries(ffnx_link_probe PRIVATE "-Wl,--whole-archive" ffnx "-Wl,--no-whole-archive" ff7_core bgfx ffnx_png ffnx_imgui ffnx_pugixml ffnx_xxhash ffnx-resources)
+  # lld only reports undefined symbols in live sections; keep everything for the census.
+  target_link_options(ffnx_link_probe PRIVATE "-Wl,--no-gc-sections" "-Wl,--error-limit=0" "-Wl,--no-demangle")
+endif()

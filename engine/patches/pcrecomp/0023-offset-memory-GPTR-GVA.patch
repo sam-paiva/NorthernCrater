@@ -1,0 +1,268 @@
+diff --git a/runtime/recomp32/recomp_types.h b/runtime/recomp32/recomp_types.h
+index 053b82d..b054587 100644
+--- a/runtime/recomp32/recomp_types.h
++++ b/runtime/recomp32/recomp_types.h
+@@ -192,6 +192,22 @@ extern ptrdiff_t g_mem_base;
+ #define ADDR(va)     ((uintptr_t)(uint32_t)(va) + g_mem_base)
+ #endif
+ 
++/* Guest addresses and host pointers, both ways, for the runtime and the HLE. Flat: the same
++ * number. Offset (a host that can't map the low 4 GB, such as an Apple arm64 process): guest
++ * memory is a 4 GB arena at g_mem_base and a guest address is an offset into it.
++ *   GPTR(va)       the host pointer for a guest address (0 stays NULL)
++ *   GVA(p)         the guest address of a host pointer into guest memory (NULL stays 0)
++ *   IS_GUEST(p)    whether a host pointer lies in guest memory */
++#ifdef RECOMP_FLAT_MEMORY
++#define GPTR(va)     ((void *)(uintptr_t)(uint32_t)(va))
++#define GVA(p)       ((uint32_t)(uintptr_t)(p))
++#define IS_GUEST(p)  ((uintptr_t)(p) <= 0xFFFFFFFFu)
++#else
++#define GPTR(va)     ((uint32_t)(va) ? (void *)((uintptr_t)(uint32_t)(va) + (uintptr_t)g_mem_base) : (void *)0)
++#define GVA(p)       ((p) ? (uint32_t)((uintptr_t)(p) - (uintptr_t)g_mem_base) : 0u)
++#define IS_GUEST(p)  ((uintptr_t)(p) - (uintptr_t)g_mem_base <= 0xFFFFFFFFu)
++#endif
++
+ /* Thread-relative segment bases. In Win32, fs: points at the TIB/TEB; gs is
+  * unused on x86. The lifter emits fs:/gs: accesses as FS_BASE/GS_BASE + addr,
+  * so the runtime points g_fs_base at a simulated TIB (VA). cs/ds/es/ss are flat. */
+diff --git a/runtime/win32hle/gdi32.c b/runtime/win32hle/gdi32.c
+index 31f481f..de0ebee 100644
+--- a/runtime/win32hle/gdi32.c
++++ b/runtime/win32hle/gdi32.c
+@@ -56,7 +56,7 @@ static void g_CreateDIBSection(void) {
+         g_dibs[g_dib_n].h_abs = hab; g_dibs[g_dib_n].topdown = h < 0;
+         g_dib_n++;
+     }
+-    if (ppv) *ppv = (uint32_t)(uintptr_t)bits;   /* the guest draws straight into this */
++    if (ppv) *ppv = GVA(bits);   /* the guest draws straight into this */
+     RET(g_next_handle++, 6);
+ }
+ 
+diff --git a/runtime/win32hle/guest_alloc.c b/runtime/win32hle/guest_alloc.c
+index 42386b2..8a4c212 100644
+--- a/runtime/win32hle/guest_alloc.c
++++ b/runtime/win32hle/guest_alloc.c
+@@ -20,6 +20,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include "guest_alloc.h"
++#include "recomp_types.h"   /* GPTR / GVA: guest addresses may be offsets into an arena at g_mem_base */
+ 
+ #if UINTPTR_MAX > 0xffffffffu
+ #include <sys/mman.h>
+@@ -50,9 +51,9 @@ static void ga_die(const char *what, uint32_t va) {
+ int guest_alloc_init(uint32_t lo, uint32_t hi) {
+     if (g_arena_hi) return 0;
+ #ifdef GA_ARENA
+-    void *p = mmap((void *)(uintptr_t)lo, (size_t)(hi - lo), PROT_READ | PROT_WRITE,
++    void *p = mmap(GPTR(lo), (size_t)(hi - lo), PROT_READ | PROT_WRITE,
+                    MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE | MAP_FIXED_NOREPLACE, -1, 0);
+-    if (p == MAP_FAILED || (uintptr_t)p != lo) {
++    if (p == MAP_FAILED || GVA(p) != lo) {
+         fprintf(stderr, "[guest_alloc] cannot reserve [0x%08X,0x%08X): %s\n", lo, hi, strerror(errno));
+         if (p != MAP_FAILED) munmap(p, (size_t)(hi - lo));
+         return -1;
+@@ -124,7 +125,7 @@ static void *ga_alloc_locked(size_t n, int zero) {
+     uint32_t need = (uint32_t)((n + GA_HDR + GA_ALIGN - 1) & ~(size_t)(GA_ALIGN - 1));
+     uint32_t a = ga_take(need);
+     if (!a) return NULL;
+-    ga_hdr *h = (ga_hdr *)(uintptr_t)a;
++    ga_hdr *h = (ga_hdr *)GPTR(a);
+     h->size = need;
+     h->magic = GA_MAGIC;
+     g_live += need;
+@@ -134,9 +135,9 @@ static void *ga_alloc_locked(size_t n, int zero) {
+ }
+ 
+ static ga_hdr *ga_header(void *p) {
+-    uintptr_t a = (uintptr_t)p;
+-    if (a < (uintptr_t)g_arena_lo + GA_HDR || a >= g_arena_hi) ga_die("free of a pointer outside the guest arena", (uint32_t)a);
+-    ga_hdr *h = (ga_hdr *)(a - GA_HDR);
++    uint64_t a = (uint64_t)((uintptr_t)p - (uintptr_t)GPTR(g_arena_lo)) + g_arena_lo;   /* its guest address */
++    if (a < (uint64_t)g_arena_lo + GA_HDR || a >= g_arena_hi) ga_die("free of a pointer outside the guest arena", (uint32_t)a);
++    ga_hdr *h = (ga_hdr *)((uint8_t *)p - GA_HDR);
+     if (h->magic != GA_MAGIC) ga_die("free of a corrupt or foreign guest block", (uint32_t)a);
+     return h;
+ }
+@@ -161,7 +162,7 @@ void guest_free(void *p) {
+     pthread_mutex_lock(&g_ga_lock);
+     if (!g_arena_hi) { free(p); pthread_mutex_unlock(&g_ga_lock); return; }
+     ga_hdr *h = ga_header(p);
+-    uint32_t a = (uint32_t)(uintptr_t)h, size = h->size;
++    uint32_t a = GVA(h), size = h->size;
+     h->magic = 0;
+     g_live -= size;
+     ga_insert_free(a, size);
+@@ -214,6 +215,7 @@ void guest_alloc_set_free_ranges(const uint32_t *pairs, uint32_t n, uint64_t liv
+ }
+ 
+ int guest_alloc_is_guest(const void *p) {
+-    uintptr_t a = (uintptr_t)p;
+-    return g_arena_hi ? (a >= g_arena_lo && a < g_arena_hi) : (a <= 0xffffffffu);
++    if (!g_arena_hi) return (uintptr_t)p <= 0xffffffffu;
++    uint64_t a = (uint64_t)((uintptr_t)p - (uintptr_t)GPTR(g_arena_lo)) + g_arena_lo;
++    return (uintptr_t)p >= (uintptr_t)GPTR(g_arena_lo) && a < g_arena_hi;
+ }
+diff --git a/runtime/win32hle/host_lite.c b/runtime/win32hle/host_lite.c
+index c23b513..a1e5126 100644
+--- a/runtime/win32hle/host_lite.c
++++ b/runtime/win32hle/host_lite.c
+@@ -88,8 +88,8 @@ static uint32_t make_tib(uint32_t lo, uint32_t hi) {
+     t[0]        = 0xFFFFFFFFu;                 /* ExceptionList: end of chain */
+     t[1]        = hi;                          /* StackBase                   */
+     t[2]        = lo;                          /* StackLimit                  */
+-    t[0x18/4]   = (uint32_t)(uintptr_t)t;      /* Self (fs:[0x18])            */
+-    return (uint32_t)(uintptr_t)t;
++    t[0x18/4]   = GVA(t);      /* Self (fs:[0x18])            */
++    return GVA(t);
+ }
+ 
+ typedef struct { regs_t r; int depth, inited; } mstate;
+@@ -98,7 +98,7 @@ static __thread mstate g_ms;
+ void mach_enter(void) {
+     pthread_mutex_lock(&g_mach);
+     if (!g_ms.inited) {
+-        uint32_t lo = (uint32_t)(uintptr_t)guest_calloc(1, GUEST_STACK);
++        uint32_t lo = GVA(guest_calloc(1, GUEST_STACK));
+         g_ms.r.esp    = lo + GUEST_STACK - 64;
+         g_ms.r.fs     = make_tib(lo, lo + GUEST_STACK);
+         g_ms.r.fpu_cw = 0x027F;
+diff --git a/runtime/win32hle/kernel32.c b/runtime/win32hle/kernel32.c
+index 732bad2..716d6e1 100644
+--- a/runtime/win32hle/kernel32.c
++++ b/runtime/win32hle/kernel32.c
+@@ -51,7 +51,7 @@ static void k_LocalFree(void)  { guest_free(APTR(0)); RET(0, 1); }
+  * host pointer on a 32-bit host); otherwise hand back fresh memory. */
+ static void k_VirtualAlloc(void) {
+     uint32_t addr = A32(0), size = A32(1);
+-    RETP(addr ? (void *)(uintptr_t)addr : guest_calloc(1, size), 4);
++    RETP(addr ? (void *)GPTR(addr) : guest_calloc(1, size), 4);
+ }
+ static void k_VirtualFree(void) { RET(1, 3); }
+ 
+diff --git a/runtime/win32hle/pe_loader.c b/runtime/win32hle/pe_loader.c
+index 5895336..e9d4f53 100644
+--- a/runtime/win32hle/pe_loader.c
++++ b/runtime/win32hle/pe_loader.c
+@@ -3,6 +3,7 @@
+  * to resolver-provided addresses. No windows.h: that is the point.
+  */
+ #define _GNU_SOURCE
++#include "recomp_types.h"   /* GPTR / GVA: the image is mapped at its guest address */
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -35,14 +36,14 @@ void recomp_pe_relocate(uint32_t base, uint32_t reloc_rva, uint32_t reloc_size,
+     if (!reloc_rva || !reloc_size || !delta) return;
+     uint32_t off = 0;
+     while (off < reloc_size) {
+-        pe_base_reloc *blk = (pe_base_reloc *)(uintptr_t)(base + reloc_rva + off);
++        pe_base_reloc *blk = (pe_base_reloc *)GPTR(base + reloc_rva + off);
+         if (blk->SizeOfBlock < sizeof *blk) break;
+         uint32_t nent = (blk->SizeOfBlock - (uint32_t)sizeof *blk) / 2;
+         uint16_t *ent = (uint16_t *)(blk + 1);
+         for (uint32_t i = 0; i < nent; i++) {
+             uint32_t type = ent[i] >> 12, where = ent[i] & 0x0FFF;
+             if (type == PE_REL_HIGHLOW)
+-                *(uint32_t *)(uintptr_t)(base + blk->VirtualAddress + where) += (uint32_t)delta;
++                *(uint32_t *)GPTR(base + blk->VirtualAddress + where) += (uint32_t)delta;
+             /* type 0 (ABSOLUTE) is padding; others are unused on x86 PE32 */
+         }
+         off += blk->SizeOfBlock;
+@@ -67,19 +68,19 @@ int recomp_pe_map(const char *path, pe_image *img) {
+ 
+     /* Reserve the image's VA range, fixed. On a 32-bit host the VA is a real
+      * host address, so a 1:1 map means every MEM32(va) in lifted code lands. */
+-    void *p = mmap((void *)(uintptr_t)image_base, span, PROT_READ | PROT_WRITE,
++    void *p = mmap((void *)GPTR(image_base), span, PROT_READ | PROT_WRITE,
+                    MAP_FIXED | MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+     if (p == MAP_FAILED) { free(file); fprintf(stderr, "[pe] mmap @ 0x%08X failed\n", image_base); return 1; }
+-    uint32_t base = (uint32_t)(uintptr_t)p;
++    uint32_t base = GVA(p);
+ 
+     /* headers, then each section's raw data (the rest of VirtualSize is the
+      * zero MAP_ANONYMOUS already gave us, i.e. .bss). */
+-    memcpy((void *)(uintptr_t)base, file, opt->SizeOfHeaders);
++    memcpy((void *)GPTR(base), file, opt->SizeOfHeaders);
+     pe_section_header *sec = (pe_section_header *)((uint8_t *)&nt->OptionalHeader + nt->FileHeader.SizeOfOptionalHeader);
+     for (int i = 0; i < nt->FileHeader.NumberOfSections; i++) {
+         uint32_t copy = sec[i].SizeOfRawData < sec[i].VirtualSize ? sec[i].SizeOfRawData : sec[i].VirtualSize;
+         if (copy && (size_t)sec[i].PointerToRawData + copy <= flen)
+-            memcpy((void *)(uintptr_t)(base + sec[i].VirtualAddress), file + sec[i].PointerToRawData, copy);
++            memcpy((void *)GPTR(base + sec[i].VirtualAddress), file + sec[i].PointerToRawData, copy);
+     }
+ 
+     if (base != image_base) {
+@@ -101,11 +102,11 @@ int recomp_pe_bind(const pe_image *img, uint32_t (*resolve)(const char *name)) {
+     if (!img->import_rva) return 0;
+     uint32_t base = img->base;
+     int unresolved = 0, bound = 0;
+-    pe_import_descriptor *d = (pe_import_descriptor *)(uintptr_t)(base + img->import_rva);
++    pe_import_descriptor *d = (pe_import_descriptor *)GPTR(base + img->import_rva);
+     for (; d->Name; d++) {
+-        const char *dll = (const char *)(uintptr_t)(base + d->Name);
+-        uint32_t *ilt = (uint32_t *)(uintptr_t)(base + (d->OriginalFirstThunk ? d->OriginalFirstThunk : d->FirstThunk));
+-        uint32_t *iat = (uint32_t *)(uintptr_t)(base + d->FirstThunk);
++        const char *dll = (const char *)GPTR(base + d->Name);
++        uint32_t *ilt = (uint32_t *)GPTR(base + (d->OriginalFirstThunk ? d->OriginalFirstThunk : d->FirstThunk));
++        uint32_t *iat = (uint32_t *)GPTR(base + d->FirstThunk);
+         for (; *ilt; ilt++, iat++) {
+             uint32_t va = 0;
+             if (*ilt & PE_ORDINAL_FLAG) {
+@@ -113,7 +114,7 @@ int recomp_pe_bind(const pe_image *img, uint32_t (*resolve)(const char *name)) {
+                  * resolver to answer by "DLL#N" if it chooses. */
+                 va = 0;
+             } else {
+-                const char *name = (const char *)(uintptr_t)(base + *ilt + 2); /* skip hint word */
++                const char *name = (const char *)GPTR(base + *ilt + 2); /* skip hint word */
+                 va = resolve(name);
+                 if (!va) fprintf(stderr, "[pe] unresolved import %s!%s\n", dll, name);
+             }
+diff --git a/runtime/win32hle/user32.c b/runtime/win32hle/user32.c
+index 71c30d4..5500d9d 100644
+--- a/runtime/win32hle/user32.c
++++ b/runtime/win32hle/user32.c
+@@ -76,7 +76,7 @@ uint32_t hle_first_hwnd(void) { return g_win_n ? g_win[0].hwnd : 0; }
+ static void u_RegisterClassA(void) {
+     uint32_t wc = A32(0);
+     uint32_t wndproc = MEM32(wc + 4);
+-    const char *name = (const char *)(uintptr_t)MEM32(wc + 36);
++    const char *name = (const char *)GPTR(MEM32(wc + 36));
+     if (g_cls_n < MAXW && name) { strncpy(g_cls[g_cls_n].name, name, 63); g_cls[g_cls_n].wndproc = wndproc; g_cls_n++; }
+     RET(1, 1);
+ }
+@@ -85,7 +85,7 @@ static void u_RegisterClassA(void) {
+  * hInst, param) - 12 args. Look the class's WndProc up by name, mint an HWND,
+  * and remember the pair so DispatchMessage can find it. */
+ static void u_CreateWindowExA(void) {
+-    const char *cls = (const char *)(uintptr_t)A32(1);
++    const char *cls = (const char *)GPTR(A32(1));
+     uint32_t wndproc = cls ? cls_wndproc(cls) : 0;
+     uint32_t hwnd = g_next_hwnd++;
+     if (g_win_n < MAXW) { g_win[g_win_n].hwnd = hwnd; g_win[g_win_n].wndproc = wndproc; g_win_n++; }
+diff --git a/runtime/win32hle/win32hle.h b/runtime/win32hle/win32hle.h
+index fc72bdb..30baf2b 100644
+--- a/runtime/win32hle/win32hle.h
++++ b/runtime/win32hle/win32hle.h
+@@ -38,17 +38,17 @@ typedef uint32_t win_handle;   /* HANDLE/HWND/HDC/HMODULE/HBITMAP... */
+ /* Stdcall argument access from inside a shim. g_esp -> [ret][arg0][arg1]...,
+  * so argument i (0-based) is at g_esp + 4 + 4*i. */
+ static inline uint32_t hle_a32(int i) {
+-    return *(uint32_t *)(uintptr_t)(g_esp + 4u + 4u * (uint32_t)i);
++    return *(uint32_t *)ADDR(g_esp + 4u + 4u * (uint32_t)i);
+ }
+ #define A32(i)   hle_a32(i)                       /* arg i as uint32_t */
+-#define APTR(i)  ((void *)(uintptr_t)hle_a32(i))  /* arg i as a pointer */
+-#define ASTR(i)  ((char *)(uintptr_t)hle_a32(i))  /* arg i as a char*  */
++#define APTR(i)  ((void *)GPTR(hle_a32(i)))  /* arg i as a pointer */
++#define ASTR(i)  ((char *)GPTR(hle_a32(i)))  /* arg i as a char*  */
+ 
+ /* Return from a stdcall shim: set eax and pop ret + argc args. Every shim ends
+  * in exactly one of these; the argc is the callee's own purge. */
+ #define RET(eax, argc)   do { g_eax = (uint32_t)(eax); g_esp += 4u + 4u * (uint32_t)(argc); return; } while (0)
+ #define RETV(argc)       RET(0, argc)                       /* void-returning (eax undefined) */
+-#define RETP(ptr, argc)  RET((uint32_t)(uintptr_t)(ptr), argc)
++#define RETP(ptr, argc)  RET(GVA(ptr), argc)
+ 
+ /* ---- shim registry ----
+  * A shim is named by the Win32 symbol it answers. The host assigns each a

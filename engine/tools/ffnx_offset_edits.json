@@ -1,0 +1,1247 @@
+[
+[
+"exe_data.cpp",
+"    uint8_t *data = (uint8_t *)ff8_externals.scan_text_data;",
+"    uint8_t *data = (uint8_t *)GPTR(ff8_externals.scan_text_data);"
+],
+[
+"exe_data.cpp",
+"    uint16_t *offsets_rel_to_data = (uint16_t *)ff8_externals.scan_text_positions;",
+"    uint16_t *offsets_rel_to_data = (uint16_t *)GPTR(ff8_externals.scan_text_positions);"
+],
+[
+"exe_data.cpp",
+"    uint8_t *data = *(uint8_t **)ff8_externals.card_name_positions;",
+"    uint8_t *data = *(uint8_t **)GPTR(ff8_externals.card_name_positions);"
+],
+[
+"exe_data.cpp",
+"    uint16_t *positions = *(uint16_t **)ff8_externals.card_name_positions;",
+"    uint16_t *positions = *(uint16_t **)GPTR(ff8_externals.card_name_positions);"
+],
+[
+"exe_data.cpp",
+"    uint8_t *entities = (uint8_t *)ff8_externals.battle_entities_1D27BCB;",
+"    uint8_t *entities = (uint8_t *)GPTR(ff8_externals.battle_entities_1D27BCB);"
+],
+[
+"exe_data.cpp",
+"    return *(char **)ff8_externals.card_name_positions + positions[card_id + 1];",
+"    return *(char **)GPTR(ff8_externals.card_name_positions) + positions[card_id + 1];"
+],
+[
+"exe_data.cpp",
+"            ff8_dump_msd(dirname, *(uint8_t **)ff8_externals.drawpoint_messages);",
+"            ff8_dump_msd(dirname, *(uint8_t **)GPTR(ff8_externals.drawpoint_messages));"
+],
+[
+"exe_data.cpp",
+"            memcpy_code((uint32_t)ff8_externals.battle_actor_sounds, sounds, size);",
+"            memcpy_code((uint32_t)GVA(ff8_externals.battle_actor_sounds), sounds, size);"
+],
+[
+"ff7/battle/camera.cpp",
+"            return isCameraFocalPoint ? (byte *)ff7_externals.battle_camera_focal_scripts_901270[*ff7_externals.battle_camera_script_index] : (byte *)ff7_externals.battle_camera_position_scripts_9010D0[*ff7_externals.battle_camera_script_index];",
+"            return isCameraFocalPoint ? (byte *)GPTR(ff7_externals.battle_camera_focal_scripts_901270[*ff7_externals.battle_camera_script_index]) : (byte *)GPTR(ff7_externals.battle_camera_position_scripts_9010D0[*ff7_externals.battle_camera_script_index]);"
+],
+[
+"ff7/battle/camera.cpp",
+"            int outerOffset = variationIndex * 4 + *(int *)(*ff7_externals.battle_camera_global_scripts_9A13BC + 0x8 + internalOffset) - *ff7_externals.battle_camera_script_offset;",
+"            int outerOffset = variationIndex * 4 + *(int *)GPTR((*ff7_externals.battle_camera_global_scripts_9A13BC + 0x8 + internalOffset)) - *ff7_externals.battle_camera_script_offset;"
+],
+[
+"ff7/battle/camera.cpp",
+"            int finalOffset = *(int *)(*ff7_externals.battle_camera_global_scripts_9A13BC + outerOffset) - *ff7_externals.battle_camera_script_offset;",
+"            int finalOffset = *(int *)GPTR((*ff7_externals.battle_camera_global_scripts_9A13BC + outerOffset)) - *ff7_externals.battle_camera_script_offset;"
+],
+[
+"ff7/battle/camera.cpp",
+"            return (byte *)(*ff7_externals.battle_camera_global_scripts_9A13BC + finalOffset);",
+"            return (byte *)GPTR((*ff7_externals.battle_camera_global_scripts_9A13BC + finalOffset));"
+],
+[
+"ff7/battle/camera.cpp",
+"        int outerOffset = (3 * cameraScriptIdx + variationIndex) * 4 + *(int *)(*ff7_externals.battle_camera_global_scripts_9A13BC + internalOffset) - *ff7_externals.battle_camera_script_offset;",
+"        int outerOffset = (3 * cameraScriptIdx + variationIndex) * 4 + *(int *)GPTR((*ff7_externals.battle_camera_global_scripts_9A13BC + internalOffset)) - *ff7_externals.battle_camera_script_offset;"
+],
+[
+"ff7/battle/camera.cpp",
+"        int finalOffset = *(int *)(*ff7_externals.battle_camera_global_scripts_9A13BC + outerOffset) - *ff7_externals.battle_camera_script_offset;",
+"        int finalOffset = *(int *)GPTR((*ff7_externals.battle_camera_global_scripts_9A13BC + outerOffset)) - *ff7_externals.battle_camera_script_offset;"
+],
+[
+"ff7/battle/camera.cpp",
+"        return (byte *)(*ff7_externals.battle_camera_global_scripts_9A13BC + finalOffset);",
+"        return (byte *)GPTR((*ff7_externals.battle_camera_global_scripts_9A13BC + finalOffset));"
+],
+[
+"ff7/battle/animations.cpp",
+"            uint32_t uniqueID = (uint32_t)_ReturnAddress();",
+"            uint32_t uniqueID = (uint32_t)GVA(_ReturnAddress());"
+],
+[
+"ff7/battle/animations.cpp",
+"                poly_set = (ff7_polygon_set*) materialRSD[1];",
+"                poly_set = (ff7_polygon_set*) GPTR(materialRSD[1]);"
+],
+[
+"ff7/battle/animations.cpp",
+"                                aux_gfx = (p_hundred*)*((DWORD*)&poly_set->struc_173 + field_C);",
+"                                aux_gfx = (p_hundred*)GPTR(*((DWORD*)&poly_set->struc_173 + field_C));"
+],
+[
+"ff7/battle/animations.cpp",
+"                        if(widescreen_enabled && (uint32_t)texture_ctx == ff7_externals.pollensalta_cold_breath_bg_texture_ctx)",
+"                        if(widescreen_enabled && (uint32_t)GVA(texture_ctx) == ff7_externals.pollensalta_cold_breath_bg_texture_ctx)"
+],
+[
+"ff7/battle/animations.cpp",
+"        patch_divide_code<float>((uint32_t)ff7_externals.field_float_battle_7B7680, battle_frame_multiplier); // float value used also elsewhere",
+"        patch_divide_code<float>((uint32_t)GVA(ff7_externals.field_float_battle_7B7680), battle_frame_multiplier); // float value used also elsewhere"
+],
+[
+"ff7/field/field.cpp",
+"                patch_code_dword((uint32_t)&common_externals.execute_opcode_table[CANMX1], ffnx_guest_va(&opcode_script_partial_animation_wrapper));",
+"                patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[CANMX1]), ffnx_guest_va(&opcode_script_partial_animation_wrapper));"
+],
+[
+"ff7/field/field.cpp",
+"                patch_code_dword((uint32_t)&common_externals.execute_opcode_table[CANMX2], ffnx_guest_va(&opcode_script_partial_animation_wrapper));",
+"                patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[CANMX2]), ffnx_guest_va(&opcode_script_partial_animation_wrapper));"
+],
+[
+"ff7/field/field.cpp",
+"                patch_code_dword((uint32_t)&common_externals.execute_opcode_table[CANIM1], ffnx_guest_va(&opcode_script_partial_animation_wrapper));",
+"                patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[CANIM1]), ffnx_guest_va(&opcode_script_partial_animation_wrapper));"
+],
+[
+"ff7/field/field.cpp",
+"                patch_code_dword((uint32_t)&common_externals.execute_opcode_table[CANIM2], ffnx_guest_va(&opcode_script_partial_animation_wrapper));",
+"                patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[CANIM2]), ffnx_guest_va(&opcode_script_partial_animation_wrapper));"
+],
+[
+"ff7/field/field.cpp",
+"        patch_code_dword((uint32_t)&common_externals.execute_opcode_table[FADE], ffnx_guest_va(&opcode_script_FADE));",
+"        patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[FADE]), ffnx_guest_va(&opcode_script_FADE));"
+],
+[
+"ff7/field/field.cpp",
+"        patch_code_dword((uint32_t)&common_externals.execute_opcode_table[MVIEF], ffnx_guest_va(&opcode_script_MVIEF));",
+"        patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[MVIEF]), ffnx_guest_va(&opcode_script_MVIEF));"
+],
+[
+"ff7/field/field.cpp",
+"        patch_code_dword((uint32_t)&common_externals.execute_opcode_table[BGMOVIE], ffnx_guest_va(&opcode_script_BGMOVIE));",
+"        patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[BGMOVIE]), ffnx_guest_va(&opcode_script_BGMOVIE));"
+],
+[
+"ff7/field/field.cpp",
+"        patch_code_dword((uint32_t)&common_externals.execute_opcode_table[WAIT], ffnx_guest_va(&opcode_script_WAIT));",
+"        patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[WAIT]), ffnx_guest_va(&opcode_script_WAIT));"
+],
+[
+"ff7/field/field.cpp",
+"        patch_code_dword((uint32_t)&common_externals.execute_opcode_table[IFKEY], ffnx_guest_va(&opcode_script_IFKEY));",
+"        patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[IFKEY]), ffnx_guest_va(&opcode_script_IFKEY));"
+],
+[
+"ff7/field/field.cpp",
+"        patch_code_dword((uint32_t)&common_externals.execute_opcode_table[VISI], ffnx_guest_va(&opcode_script_VISI));",
+"        patch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[VISI]), ffnx_guest_va(&opcode_script_VISI));"
+],
+[
+"ff7/field/kawai_eyetx.cpp",
+"            const char *model_filename = (const char *)(*ff7_externals.field_models_data + 10380 * model_id + 512);",
+"            const char *model_filename = (const char *)GPTR((*ff7_externals.field_models_data + 10380 * model_id + 512));"
+],
+[
+"ff7/field/kawai_eyetx.cpp",
+"                info.base_directory = (uint32_t)ff7_externals.field_unk_909288;",
+"                info.base_directory = (uint32_t)GVA(ff7_externals.field_unk_909288);"
+],
+[
+"ff7/graphics.cpp",
+"\t\tmemcpy_code((uint32_t)&world_matrix, root_matrix, sizeof(world_matrix));",
+"\t\tmemcpy_code((uint32_t)GVA(&world_matrix), root_matrix, sizeof(world_matrix));"
+],
+[
+"ff7/graphics.cpp",
+"\t\tif(hrc_data->flags & 0x800) memcpy_code((uint32_t)&hrc_data->field_64, &world_matrix, sizeof(world_matrix));",
+"\t\tif(hrc_data->flags & 0x800) memcpy_code((uint32_t)GVA(&hrc_data->field_64), &world_matrix, sizeof(world_matrix));"
+],
+[
+"ff7/graphics.cpp",
+"\t\t\tmemcpy_code((uint32_t)&world_matrix, &gltf_root_matrix, sizeof(world_matrix));",
+"\t\t\tmemcpy_code((uint32_t)GVA(&world_matrix), &gltf_root_matrix, sizeof(world_matrix));"
+],
+[
+"ff7/graphics.cpp",
+"      result = (int)a1;",
+"      result = (int)GVA(a1);"
+],
+[
+"ff7/minigames.cpp",
+"    ff7_externals.sub_733479((void*)*((DWORD*)*ff7_externals.snowboard_global_object_off_926290 + 0x9D), matrix);",
+"    ff7_externals.sub_733479((void*)GPTR(*((DWORD*)GPTR(*ff7_externals.snowboard_global_object_off_926290) + 0x9D)), matrix);"
+],
+[
+"ff7/minigames.cpp",
+"        vertex.x = ((tmd_vertex_float*)tmd_obj->offsetverts)[i].vx;",
+"        vertex.x = ((tmd_vertex_float*)GPTR(tmd_obj->offsetverts))[i].vx;"
+],
+[
+"ff7/minigames.cpp",
+"        vertex.y = ((tmd_vertex_float*)tmd_obj->offsetverts)[i].vy;",
+"        vertex.y = ((tmd_vertex_float*)GPTR(tmd_obj->offsetverts))[i].vy;"
+],
+[
+"ff7/minigames.cpp",
+"        vertex.z = ((tmd_vertex_float*)tmd_obj->offsetverts)[i].vz;",
+"        vertex.z = ((tmd_vertex_float*)GPTR(tmd_obj->offsetverts))[i].vz;"
+],
+[
+"ff7/minigames.cpp",
+"        vertex.x = (float)((tmd_vertex*)tmd_obj->offsetverts)[i].vx;",
+"        vertex.x = (float)((tmd_vertex*)GPTR(tmd_obj->offsetverts))[i].vx;"
+],
+[
+"ff7/minigames.cpp",
+"        vertex.y = (float)((tmd_vertex*)tmd_obj->offsetverts)[i].vy;",
+"        vertex.y = (float)((tmd_vertex*)GPTR(tmd_obj->offsetverts))[i].vy;"
+],
+[
+"ff7/minigames.cpp",
+"        vertex.z = (float)((tmd_vertex*)tmd_obj->offsetverts)[i].vz;",
+"        vertex.z = (float)((tmd_vertex*)GPTR(tmd_obj->offsetverts))[i].vz;"
+],
+[
+"ff7/minigames.cpp",
+"      ff7_externals.sub_733564((void*)*((DWORD*)*ff7_externals.snowboard_global_object_off_926290 + 0x9D), &vertex, &point[i + 1]);",
+"      ff7_externals.sub_733564((void*)GPTR(*((DWORD*)GPTR(*ff7_externals.snowboard_global_object_off_926290) + 0x9D)), &vertex, &point[i + 1]);"
+],
+[
+"ff7/minigames.cpp",
+"        ff7_externals.sub_7322D6((tmd_primitive_packet*)tmd_obj->offsetprimitives, tmd_obj->nprimitives, unk);",
+"        ff7_externals.sub_7322D6((tmd_primitive_packet*)GPTR(tmd_obj->offsetprimitives), tmd_obj->nprimitives, unk);"
+],
+[
+"ff7/minigames.cpp",
+"        ff7_externals.sub_732429((tmd_primitive_packet*)tmd_obj->offsetprimitives, tmd_obj->nprimitives, unk);",
+"        ff7_externals.sub_732429((tmd_primitive_packet*)GPTR(tmd_obj->offsetprimitives), tmd_obj->nprimitives, unk);"
+],
+[
+"ff7/minigames.cpp",
+"        ff7_externals.sub_732BB9((tmd_primitive_packet*)tmd_obj->offsetprimitives, tmd_obj->nprimitives, unk);",
+"        ff7_externals.sub_732BB9((tmd_primitive_packet*)GPTR(tmd_obj->offsetprimitives), tmd_obj->nprimitives, unk);"
+],
+[
+"ff7/minigames.cpp",
+"        ff7_externals.sub_732546(_this, (tmd_primitive_packet*)tmd_obj->offsetprimitives, tmd_obj->nprimitives, unk);",
+"        ff7_externals.sub_732546(_this, (tmd_primitive_packet*)GPTR(tmd_obj->offsetprimitives), tmd_obj->nprimitives, unk);"
+],
+[
+"common.cpp",
+"\treturn (*(uint32_t *)(offset));",
+"\treturn (*(uint32_t *)GPTR((offset)));"
+],
+[
+"common.cpp",
+"\t\t((LPDWORD)dwParam2)[1] = (DWORD)&mciStatusRet;",
+"\t\t((LPDWORD)dwParam2)[1] = (DWORD)GVA(&mciStatusRet);"
+],
+[
+"common.cpp",
+"\t\t\t\t\tif (macOsLauncher) replace_function(getProcessEntryPoint(), (void*)common_externals.start);",
+"\t\t\t\t\tif (macOsLauncher) replace_function(getProcessEntryPoint(), (void*)(uintptr_t)common_externals.start);"
+],
+[
+"common.cpp",
+"\t\t\t\tif (macOsLauncher) replace_function(getProcessEntryPoint(), (void*)ff8_externals.start);",
+"\t\t\t\tif (macOsLauncher) replace_function(getProcessEntryPoint(), (void*)(uintptr_t)ff8_externals.start);"
+],
+[
+"ff7/loaders.cpp",
+"\t\tret->anim_frames[i].header = (anim_frame_header *)data_pointer;",
+"\t\tret->anim_frames[i].header = (anim_frame_header *)GPTR(data_pointer);"
+],
+[
+"ff7/loaders.cpp",
+"\t\tret->anim_frames[i].data = (vector3<float> *)data_pointer;",
+"\t\tret->anim_frames[i].data = (vector3<float> *)GPTR(data_pointer);"
+],
+[
+"ff7/misc.cpp",
+"\tif ( game_object->field_794 ) common_externals.diff_time(&end_t, &start_t, (uint64_t*)(game_object->field_794 + 0x98));",
+"\tif ( game_object->field_794 ) common_externals.diff_time(&end_t, &start_t, (uint64_t*)GPTR((game_object->field_794 + 0x98)));"
+],
+[
+"ff7/universal_buttons.cpp",
+"  a2.base_directory = (uint32_t)ff7_externals.unk_DC1074;",
+"  a2.base_directory = (uint32_t)GVA(ff7_externals.unk_DC1074);"
+],
+[
+"ff7/universal_buttons.cpp",
+"  *(byte*)sprite.graphics_object->curr_total_n_shape = 7;",
+"  *(byte*)GPTR(sprite.graphics_object->curr_total_n_shape) = 7;"
+],
+[
+"ff7/world/renderer.cpp",
+"                    (int)&ff7_externals.byte_96D6A8[12 * eff_node->unknown_idx],",
+"                    (int)GVA(&ff7_externals.byte_96D6A8[12 * eff_node->unknown_idx]),"
+],
+[
+"ff7/japanese_text.cpp",
+"  *(byte*)graphics_object->curr_total_n_shape = shape;",
+"  *(byte*)GPTR(graphics_object->curr_total_n_shape) = shape;"
+],
+[
+"ff7/japanese_text.cpp",
+"              *(byte *)graphics_object->curr_total_n_shape = 2 * character_n_shapes;",
+"              *(byte *)GPTR(graphics_object->curr_total_n_shape) = 2 * character_n_shapes;"
+],
+[
+"ff7/japanese_text.cpp",
+"              *(byte *)graphics_object->curr_total_n_shape = 7;",
+"              *(byte *)GPTR(graphics_object->curr_total_n_shape) = 7;"
+],
+[
+"ff7/japanese_text.cpp",
+"      *(byte*)character_graphics_object->curr_total_n_shape = 2 * n_shapes;",
+"      *(byte*)GPTR(character_graphics_object->curr_total_n_shape) = 2 * n_shapes;"
+],
+[
+"ff7/japanese_text.cpp",
+"        *(byte*)character_graphics_object->curr_total_n_shape = n_shapes & 7;",
+"        *(byte*)GPTR(character_graphics_object->curr_total_n_shape) = n_shapes & 7;"
+],
+[
+"ff7/japanese_text.cpp",
+"            *(byte *)a2->curr_total_n_shape = 14;",
+"            *(byte *)GPTR(a2->curr_total_n_shape) = 14;"
+],
+[
+"ff7/japanese_text.cpp",
+"      *(byte *)(*ff7_externals.battle_graphics_data_ptr_9ADFD8)->btl_win_c_menu_border_graphics_object->curr_total_n_shape = 0;",
+"      *(byte *)GPTR((*ff7_externals.battle_graphics_data_ptr_9ADFD8)->btl_win_c_menu_border_graphics_object->curr_total_n_shape) = 0;"
+],
+[
+"ff7/japanese_text.cpp",
+"    *(uint32_t*)(ff7_externals.name_menu_pane_cursor_rows_DD453C + 1 * 0x38) = 5;",
+"    *(uint32_t*)GPTR((ff7_externals.name_menu_pane_cursor_rows_DD453C + 1 * 0x38)) = 5;"
+],
+[
+"ff7/japanese_text.cpp",
+"    uint32_t row = *(uint32_t*)(ff7_externals.name_menu_pane_cursor_rows_DD453C + 1 * 0x38);",
+"    uint32_t row = *(uint32_t*)GPTR((ff7_externals.name_menu_pane_cursor_rows_DD453C + 1 * 0x38));"
+],
+[
+"field.cpp",
+"\t\tcommon_externals.current_triangle_id = (int16_t*)(*(uint32_t *)ff8_externals.field_state_others + 0x264 * i + 0x1FA);",
+"\t\tcommon_externals.current_triangle_id = (int16_t*)GPTR((*(uint32_t *)ff8_externals.field_state_others + 0x264 * i + 0x1FA));"
+],
+[
+"field.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0xA0], ffnx_guest_va(&opcode_pc_map_change));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0xA0]), ffnx_guest_va(&opcode_pc_map_change));"
+],
+[
+"field.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x28], ffnx_guest_va(&opcode_kawai));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x28]), ffnx_guest_va(&opcode_kawai));"
+],
+[
+"field.cpp",
+"\t\tfield_final_fade_color = (uint32_t*)get_absolute_value(ff7_externals.field_calc_fade_color_sub_63AE66, 0x326);",
+"\t\tfield_final_fade_color = (uint32_t*)GPTR(get_absolute_value(ff7_externals.field_calc_fade_color_sub_63AE66, 0x326));"
+],
+[
+"field.cpp",
+"\t\tfield_fade_draw_flags = (uint32_t*)get_absolute_value((uint32_t)field_draw_fade_original, 0xB);",
+"\t\tfield_fade_draw_flags = (uint32_t*)GPTR(get_absolute_value((uint32_t)field_draw_fade_original, 0xB));"
+],
+[
+"field.cpp",
+"\t\tfield_system_fade = (uint32_t*)get_absolute_value(ff7_externals.field_calc_fade_color_sub_63AE66, 0x35);",
+"\t\tfield_system_fade = (uint32_t*)GPTR(get_absolute_value(ff7_externals.field_calc_fade_color_sub_63AE66, 0x35));"
+],
+[
+"field.cpp",
+"\t\tmemcpy(map_patch_storage, (void*)common_externals.update_entities_call, 7); // Make a copy of the existing CALL",
+"\t\tmemcpy(map_patch_storage, (void*)GPTR(common_externals.update_entities_call), 7); // Make a copy of the existing CALL"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 8) += wide_viewport_x;",
+"\t*(short*)GPTR((wave_data_pointer + 8)) += wide_viewport_x;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 16) += wide_viewport_x + viewport_width_1_fix * 2;",
+"\t*(short*)GPTR((wave_data_pointer + 16)) += wide_viewport_x + viewport_width_1_fix * 2;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 24) += wide_viewport_x;",
+"\t*(short*)GPTR((wave_data_pointer + 24)) += wide_viewport_x;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 32) += wide_viewport_x + viewport_width_1_fix * 2;",
+"\t*(short*)GPTR((wave_data_pointer + 32)) += wide_viewport_x + viewport_width_1_fix * 2;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 8) += wide_viewport_x + viewport_width_1_fix * 2;",
+"\t*(short*)GPTR((wave_data_pointer + 8)) += wide_viewport_x + viewport_width_1_fix * 2;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 16) += wide_viewport_x + (viewport_width_1_fix + viewport_width_2_fix) * 2;",
+"\t*(short*)GPTR((wave_data_pointer + 16)) += wide_viewport_x + (viewport_width_1_fix + viewport_width_2_fix) * 2;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 24) += wide_viewport_x + viewport_width_1_fix * 2;",
+"\t*(short*)GPTR((wave_data_pointer + 24)) += wide_viewport_x + viewport_width_1_fix * 2;"
+],
+[
+"ff7/widescreen.cpp",
+"\t*(short*)(wave_data_pointer + 32) += wide_viewport_x + (viewport_width_1_fix + viewport_width_2_fix) * 2;",
+"\t*(short*)GPTR((wave_data_pointer + 32)) += wide_viewport_x + (viewport_width_1_fix + viewport_width_2_fix) * 2;"
+],
+[
+"ff7/widescreen.cpp",
+"    patch_code_int((uint32_t)ff7_externals.chocobo_fade_quad_data_97A498 + 0x28, wide_viewport_width / 2);",
+"    patch_code_int((uint32_t)GVA(ff7_externals.chocobo_fade_quad_data_97A498) + 0x28, wide_viewport_width / 2);"
+],
+[
+"ff7/widescreen.cpp",
+"    patch_code_float((uint32_t)ff7_externals.snowboard_sky_quad_pos_x_7B7DB8, wide_viewport_x);",
+"    patch_code_float((uint32_t)GVA(ff7_externals.snowboard_sky_quad_pos_x_7B7DB8), wide_viewport_x);"
+],
+[
+"hext.cpp",
+"        int *ptr = (int*)(std::stoi(sparts[0].substr(0, sparts[0].length() - 1), nullptr, 16) + inGlobalOffset);",
+"        int *ptr = (int*)GPTR((std::stoi(sparts[0].substr(0, sparts[0].length() - 1), nullptr, 16) + inGlobalOffset));"
+],
+[
+"hext.cpp",
+"        VirtualProtect((LPVOID)addr, length, PAGE_EXECUTE_READWRITE, &dummy);",
+"        VirtualProtect((LPVOID)GPTR(addr), length, PAGE_EXECUTE_READWRITE, &dummy);"
+],
+[
+"world.cpp",
+"\t\tplayerPosX = (DWORD*)get_absolute_value(ff8_externals.sub_53BB90, 0x4C);",
+"\t\tplayerPosX = (DWORD*)GPTR(get_absolute_value(ff8_externals.sub_53BB90, 0x4C));"
+],
+[
+"world.cpp",
+"\t\t\twm_struct = (BYTE*)get_absolute_value(ff8_externals.sub_53C750, 0x633);",
+"\t\t\twm_struct = (BYTE*)GPTR(get_absolute_value(ff8_externals.sub_53C750, 0x633));"
+],
+[
+"world.cpp",
+"\t\t\tbCollisionEnabled = (DWORD*)get_absolute_value(ff8_externals.sub_53E6B0, 0x4);",
+"\t\t\tbCollisionEnabled = (DWORD*)GPTR(get_absolute_value(ff8_externals.sub_53E6B0, 0x4));"
+],
+[
+"world.cpp",
+"\t\t\twm_struct = (BYTE*)get_absolute_value(ff8_externals.sub_53C750, 0x649);",
+"\t\t\twm_struct = (BYTE*)GPTR(get_absolute_value(ff8_externals.sub_53C750, 0x649));"
+],
+[
+"world.cpp",
+"\t\t\tbCollisionEnabled = (DWORD*)get_absolute_value(ff8_externals.sub_53E6B0, 0x1);",
+"\t\t\tbCollisionEnabled = (DWORD*)GPTR(get_absolute_value(ff8_externals.sub_53E6B0, 0x1));"
+],
+[
+"world.cpp",
+"\t\ttPage = (*((BYTE*)*currentCollideTriangle + 12) >> 4) & 0x0F;",
+"\t\ttPage = (*((BYTE*)GPTR(*currentCollideTriangle) + 12) >> 4) & 0x0F;"
+],
+[
+"world.cpp",
+"\t\tclut = *((BYTE*)*currentCollideTriangle + 12) &0x0F;",
+"\t\tclut = *((BYTE*)GPTR(*currentCollideTriangle) + 12) &0x0F;"
+],
+[
+"world.cpp",
+"\t\ttexFlags = *((BYTE*)*currentCollideTriangle + 14);",
+"\t\ttexFlags = *((BYTE*)GPTR(*currentCollideTriangle) + 14);"
+],
+[
+"world.cpp",
+"\t\tvertFlags = *((BYTE*)*currentCollideTriangle + 15);",
+"\t\tvertFlags = *((BYTE*)GPTR(*currentCollideTriangle) + 15);"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"F1\", ImGuiDataType_U8 ,(BYTE*)*currentCollideTriangle, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"F1\", ImGuiDataType_U8 ,(BYTE*)GPTR(*currentCollideTriangle), &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"F2\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 1, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"F2\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 1, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"F3\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 2, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"F3\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 2, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"N1\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 3, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"N1\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 3, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"N2\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 4, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"N2\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 4, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"N3\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 5, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"N3\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 5, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"U1\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 6, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"U1\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 6, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"V1\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 7, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"V1\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 7, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"U2\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 8, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"U2\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 8, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"V2\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 9, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"V2\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 9, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"U3\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 10, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"U3\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 10, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"V3\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 11, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"V3\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 11, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\tImGui::InputScalar(\"Ground type\", ImGuiDataType_U8, (BYTE*)*currentCollideTriangle + 13, &u8step, &u8stepTen, \"%d\");",
+"\t\tImGui::InputScalar(\"Ground type\", ImGuiDataType_U8, (BYTE*)GPTR(*currentCollideTriangle) + 13, &u8step, &u8stepTen, \"%d\");"
+],
+[
+"world.cpp",
+"\t\t*((BYTE*)*currentCollideTriangle + 12) = (BYTE)(tPage<<4 | clut);",
+"\t\t*((BYTE*)GPTR(*currentCollideTriangle) + 12) = (BYTE)(tPage<<4 | clut);"
+],
+[
+"world.cpp",
+"\t\t*((BYTE*)*currentCollideTriangle + 14) = (BYTE)texFlags;",
+"\t\t*((BYTE*)GPTR(*currentCollideTriangle) + 14) = (BYTE)texFlags;"
+],
+[
+"world.cpp",
+"\t\t*((BYTE*)*currentCollideTriangle + 15) = (BYTE)vertFlags;",
+"\t\t*((BYTE*)GPTR(*currentCollideTriangle) + 15) = (BYTE)vertFlags;"
+],
+[
+"voice.cpp",
+"\tbyte id = *(byte*)ff7_externals.current_dialog_string_pointer[window_id];",
+"\tbyte id = *(byte*)GPTR(ff7_externals.current_dialog_string_pointer[window_id]);"
+],
+[
+"voice.cpp",
+"\t\tstd::string decoded_text = decode_ff7_text((char*)*ff7_externals.menu_tutorial_window_text_ptr);",
+"\t\tstd::string decoded_text = decode_ff7_text((char*)GPTR(*ff7_externals.menu_tutorial_window_text_ptr));"
+],
+[
+"voice.cpp",
+"\tconst byte *action = *(const byte **)(task + 4);",
+"\tconst byte *action = *(const byte **)GPTR((task + 4));"
+],
+[
+"voice.cpp",
+"\t\tuint16_t enemy_id = *(byte *)(ff8_externals.battle_entities_1D27BCB + 208 * actor_id);",
+"\t\tuint16_t enemy_id = *(byte *)GPTR((ff8_externals.battle_entities_1D27BCB + 208 * actor_id));"
+],
+[
+"voice.cpp",
+"\t\t*(const short *)(task + 2) == 8 && *(const byte *)(task + 10) == 3 &&",
+"\t\t*(const short *)GPTR((task + 2)) == 8 && *(const byte *)GPTR((task + 10)) == 3 &&"
+],
+[
+"voice.cpp",
+"\t\t*(const byte *)(task + 11) == 86 && ff8_battle_voice_data.text_type == display_type::CHAR_CMD)",
+"\t\t*(const byte *)GPTR((task + 11)) == 86 && ff8_battle_voice_data.text_type == display_type::CHAR_CMD)"
+],
+[
+"voice.cpp",
+"\t\tstd::string decoded_text = ff8_decode_text(*(const char **)(task + 4));",
+"\t\tstd::string decoded_text = ff8_decode_text(*(const char **)GPTR((task + 4)));"
+],
+[
+"voice.cpp",
+"\tbyte idx = *(byte *)(unk + 388);",
+"\tbyte idx = *(byte *)GPTR((unk + 388));"
+],
+[
+"voice.cpp",
+"\tint magic_id = *(DWORD *)(unk + 4 * idx--);",
+"\tint magic_id = *(DWORD *)GPTR((unk + 4 * idx--));"
+],
+[
+"voice.cpp",
+"\tint dialog_id = *(DWORD *)(unk + 4 * idx--);",
+"\tint dialog_id = *(DWORD *)GPTR((unk + 4 * idx--));"
+],
+[
+"voice.cpp",
+"\tint window_id = *(DWORD *)(unk + 4 * idx);",
+"\tint window_id = *(DWORD *)GPTR((unk + 4 * idx));"
+],
+[
+"voice.cpp",
+"\tint default_option = *(DWORD *)(unk + 4 * idx--); // Line of default option",
+"\tint default_option = *(DWORD *)GPTR((unk + 4 * idx--)); // Line of default option"
+],
+[
+"voice.cpp",
+"\t\t\tint chosen_option = *(DWORD*)(unk + 240);",
+"\t\t\tint chosen_option = *(DWORD*)GPTR((unk + 240));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x40], ffnx_guest_va(&opcode_voice_message));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x40]), ffnx_guest_va(&opcode_voice_message));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x48], ffnx_guest_va(&opcode_voice_ask));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x48]), ffnx_guest_va(&opcode_voice_ask));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x52], ffnx_guest_va(&opcode_wmode));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x52]), ffnx_guest_va(&opcode_wmode));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x21], ffnx_guest_va(&opcode_voice_tutor));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x21]), ffnx_guest_va(&opcode_voice_tutor));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x47], ffnx_guest_va(&ff8_opcode_voice_mes));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x47]), ffnx_guest_va(&ff8_opcode_voice_mes));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x65], ffnx_guest_va(&ff8_opcode_voice_ames));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x65]), ffnx_guest_va(&ff8_opcode_voice_ames));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x64], ffnx_guest_va(&ff8_opcode_voice_amesw));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x64]), ffnx_guest_va(&ff8_opcode_voice_amesw));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x116], ffnx_guest_va(&ff8_opcode_voice_ramesw));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x116]), ffnx_guest_va(&ff8_opcode_voice_ramesw));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x4A], ffnx_guest_va(&ff8_opcode_voice_ask));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x4A]), ffnx_guest_va(&ff8_opcode_voice_ask));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x6F], ffnx_guest_va(&ff8_opcode_voice_aask));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x6F]), ffnx_guest_va(&ff8_opcode_voice_aask));"
+],
+[
+"voice.cpp",
+"\t\tpatch_code_dword((uint32_t)&common_externals.execute_opcode_table[0x137], ffnx_guest_va(&ff8_opcode_voice_drawpoint));",
+"\t\tpatch_code_dword((uint32_t)GVA(&common_externals.execute_opcode_table[0x137]), ffnx_guest_va(&ff8_opcode_voice_drawpoint));"
+],
+[
+"music.cpp",
+"\t\tconst char* current_party_leader = ff8_names[*(byte*)(ff8_externals.field_vars_stack_1CFE9B8 + 0xCB) == 62 ? 8 : 0].c_str();",
+"\t\tconst char* current_party_leader = ff8_names[*(byte*)GPTR((ff8_externals.field_vars_stack_1CFE9B8 + 0xCB)) == 62 ? 8 : 0].c_str();"
+],
+[
+"sfx.cpp",
+"\tgptr<BYTE>* sfx_tmp_volume = (gptr<BYTE>*)(ff7_externals.config_menu_sub + ff7_externals.call_menu_sound_slider_loop_sfx_down + 0xA);   // FF7Recomp: guest cell",
+"\tgptr<BYTE>* sfx_tmp_volume = (gptr<BYTE>*)GPTR((ff7_externals.config_menu_sub + ff7_externals.call_menu_sound_slider_loop_sfx_down + 0xA));   // FF7Recomp: guest cell"
+],
+[
+"sfx.cpp",
+"\tgptr<uint32_t>* flags = (gptr<uint32_t>*)(ff7_externals.battle_clear_sound_flags + 5);   // FF7Recomp: guest cell",
+"\tgptr<uint32_t>* flags = (gptr<uint32_t>*)GPTR((ff7_externals.battle_clear_sound_flags + 5));   // FF7Recomp: guest cell"
+],
+[
+"ff7_data.h",
+"\tif(*((uint32_t *)main_loop) != 0x81EC8B55) ffnx_unexpected(\"odd main loop prologue\\n\");",
+"\tif(*((uint32_t *)GPTR(main_loop)) != 0x81EC8B55) ffnx_unexpected(\"odd main loop prologue\\n\");"
+],
+[
+"ff7_data.h",
+"\tff7_externals.num_field_entities = (WORD *)GPTR((((uint32_t)ff7_externals.field_layers) - 0xC));",
+"\tff7_externals.num_field_entities = (WORD *)GPTR((((uint32_t)GVA(ff7_externals.field_layers)) - 0xC));"
+],
+[
+"ff7_data.h",
+"\tff7_externals.field_objects = (gptr<field_object> *)GPTR((((uint32_t)ff7_externals.field_layers) - 0x10));",
+"\tff7_externals.field_objects = (gptr<field_object> *)GPTR((((uint32_t)GVA(ff7_externals.field_layers)) - 0x10));"
+],
+[
+"ff7_data.h",
+"\tff7_externals.battle_menu_state_fn_table = std::span((uint32_t*)get_absolute_value(ff7_externals.battle_sub_6DB0EE, 0x1B4), 64);",
+"\tff7_externals.battle_menu_state_fn_table = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_sub_6DB0EE, 0x1B4)), 64);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.magic_effects_fn_table = std::span((uint32_t*)get_absolute_value(ff7_externals.battle_sub_427C22, 0xBF), 54);",
+"\tff7_externals.magic_effects_fn_table = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_sub_427C22, 0xBF)), 54);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.name_menu_action_continue_71914C = ff7_externals.menu_sub_718DBE + 0x295 + *(int32_t *)(ff7_externals.menu_sub_718DBE + 0x291);",
+"\tff7_externals.name_menu_action_continue_71914C = ff7_externals.menu_sub_718DBE + 0x295 + *(int32_t *)GPTR((ff7_externals.menu_sub_718DBE + 0x291));"
+],
+[
+"ff7_data.h",
+"\tcommon_externals.directsound = (LPLPDIRECTSOUND)get_absolute_value(common_externals.directsound_create, 0x15);",
+"\tcommon_externals.directsound = (LPLPDIRECTSOUND)GPTR(get_absolute_value(common_externals.directsound_create, 0x15));"
+],
+[
+"ff7_data.h",
+"\tff7_externals.camera_fn_array = std::span((uint32_t*)get_absolute_value(ff7_externals.add_fn_to_camera_fn_array, 0x39), 16);",
+"\tff7_externals.camera_fn_array = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.add_fn_to_camera_fn_array, 0x39)), 16);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.camera_fn_data = std::span((bcamera_fn_data*)get_absolute_value(ff7_externals.add_fn_to_camera_fn_array, 0x4D), 16);",
+"\tff7_externals.camera_fn_data = std::span((bcamera_fn_data*)GPTR(get_absolute_value(ff7_externals.add_fn_to_camera_fn_array, 0x4D)), 16);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.battle_camera_position = std::span((bcamera_position*)get_absolute_value(ff7_externals.set_camera_position_scripts, 0x331), 4);",
+"\tff7_externals.battle_camera_position = std::span((bcamera_position*)GPTR(get_absolute_value(ff7_externals.set_camera_position_scripts, 0x331)), 4);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.battle_camera_focal_point = std::span((bcamera_position*)get_absolute_value(ff7_externals.set_camera_focal_position_scripts, 0x233), 4);",
+"\tff7_externals.battle_camera_focal_point = std::span((bcamera_position*)GPTR(get_absolute_value(ff7_externals.set_camera_focal_position_scripts, 0x233)), 4);"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(battle_run_action_script, 0x7),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(battle_run_action_script, 0x7)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(battle_wait_for_action, 0x5),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(battle_wait_for_action, 0x5)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(ff7_externals.battle_loop, 0x6D6),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_loop, 0x6D6)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(ff7_externals.battle_loop, 0x845),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_loop, 0x845)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(ff7_externals.battle_loop, 0x94B),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_loop, 0x94B)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(ff7_externals.battle_sub_430DD0, 0x7),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_sub_430DD0, 0x7)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(battle_arena_next_scene, 0x13),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(battle_arena_next_scene, 0x13)),"
+],
+[
+"ff7_data.h",
+"\t\t(uint32_t*)get_absolute_value(battle_chocobo_escape, 0xE),",
+"\t\t(uint32_t*)GPTR(get_absolute_value(battle_chocobo_escape, 0xE)),"
+],
+[
+"ff7_data.h",
+"\tff7_externals.formation_camera = std::span((formation_camera*)get_absolute_value(ff7_externals.set_battle_camera_sub_5C22BD, 0x10), 4);",
+"\tff7_externals.formation_camera = std::span((formation_camera*)GPTR(get_absolute_value(ff7_externals.set_battle_camera_sub_5C22BD, 0x10)), 4);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.effect100_array_data = std::span((effect100_data*)get_absolute_value(ff7_externals.add_fn_to_effect100_fn, 0x5D), 100);",
+"\tff7_externals.effect100_array_data = std::span((effect100_data*)GPTR(get_absolute_value(ff7_externals.add_fn_to_effect100_fn, 0x5D)), 100);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.effect100_array_fn = std::span((uint32_t*)get_absolute_value(ff7_externals.add_fn_to_effect100_fn, 0x48), 100);",
+"\tff7_externals.effect100_array_fn = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.add_fn_to_effect100_fn, 0x48)), 100);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.effect60_array_data = std::span((effect60_data*)get_absolute_value(ff7_externals.add_fn_to_effect60_fn, 0x5D), 60);",
+"\tff7_externals.effect60_array_data = std::span((effect60_data*)GPTR(get_absolute_value(ff7_externals.add_fn_to_effect60_fn, 0x5D)), 60);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.effect60_array_fn = std::span((uint32_t*)get_absolute_value(ff7_externals.add_fn_to_effect60_fn, 0x48), 60);",
+"\tff7_externals.effect60_array_fn = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.add_fn_to_effect60_fn, 0x48)), 60);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.effect10_array_data = std::span((effect10_data*)get_absolute_value(ff7_externals.add_fn_to_effect10_fn, 0x5D), 10);",
+"\tff7_externals.effect10_array_data = std::span((effect10_data*)GPTR(get_absolute_value(ff7_externals.add_fn_to_effect10_fn, 0x5D)), 10);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.effect10_array_fn = std::span((uint32_t*)get_absolute_value(ff7_externals.add_fn_to_effect10_fn, 0x48), 10);",
+"\tff7_externals.effect10_array_fn = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.add_fn_to_effect10_fn, 0x48)), 10);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.g_battle_model_state = std::span((battle_model_state*)get_absolute_value(battle_sub_42B66A, 0xD9), 10);",
+"\tff7_externals.g_battle_model_state = std::span((battle_model_state*)GPTR(get_absolute_value(battle_sub_42B66A, 0xD9)), 10);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.g_small_battle_model_state = std::span((battle_model_state_small*)get_absolute_value(ff7_externals.run_animation_script, 0x2BB9), 10);",
+"\tff7_externals.g_small_battle_model_state = std::span((battle_model_state_small*)GPTR(get_absolute_value(ff7_externals.run_animation_script, 0x2BB9)), 10);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.g_script_args = std::span((gptr<int> *)get_absolute_value(ff7_externals.run_animation_script, 0x3EA), 8);",
+"\tff7_externals.g_script_args = std::span((gptr<int> *)GPTR(get_absolute_value(ff7_externals.run_animation_script, 0x3EA)), 8);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.limit_break_effects_fn_table = std::span((uint32_t*)get_absolute_value(ff7_externals.battle_sub_427C22, 0x40E), 80);",
+"\tff7_externals.limit_break_effects_fn_table = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_sub_427C22, 0x40E)), 80);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.enemy_atk_effects_fn_table = std::span((uint32_t*)get_absolute_value(ff7_externals.battle_sub_427C22, 0x4B9), 157);",
+"\tff7_externals.enemy_atk_effects_fn_table = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_sub_427C22, 0x4B9)), 157);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.enemy_skill_effects_fn_table = std::span((uint32_t*)get_absolute_value(ff7_externals.battle_sub_427C22, 0x20A), 24);",
+"\tff7_externals.enemy_skill_effects_fn_table = std::span((uint32_t*)GPTR(get_absolute_value(ff7_externals.battle_sub_427C22, 0x20A)), 24);"
+],
+[
+"ff7_data.h",
+"\tgptr<uint32_t> *battle_functions_table_7C2AC0 = (gptr<uint32_t> *)get_absolute_value(battle_sub_4351BD, 0x3A);",
+"\tgptr<uint32_t> *battle_functions_table_7C2AC0 = (gptr<uint32_t> *)GPTR(get_absolute_value(battle_sub_4351BD, 0x3A));"
+],
+[
+"ff7_data.h",
+"\tff7_externals.pollensalta_cold_breath_white_dots_pos = std::span((vector4<short>*) get_absolute_value(ff7_externals.pollensalta_cold_breath_atk_white_dot_effect_547D56, 0x79), 400);",
+"\tff7_externals.pollensalta_cold_breath_white_dots_pos = std::span((vector4<short>*) GPTR(get_absolute_value(ff7_externals.pollensalta_cold_breath_atk_white_dot_effect_547D56, 0x79)), 400);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.world_dword_DE68FC = (void(**)())get_absolute_value(ff7_externals.world_loop_74BE49, 0x123);",
+"\tff7_externals.world_dword_DE68FC = (void(**)())GPTR(get_absolute_value(ff7_externals.world_loop_74BE49, 0x123));"
+],
+[
+"ff7_data.h",
+"\tff7_externals.world_camera_x_rotation_array_E37120 = std::span((short*)get_absolute_value(ff7_externals.world_update_camera_74E8CE, 0x103), 512);",
+"\tff7_externals.world_camera_x_rotation_array_E37120 = std::span((short*)GPTR(get_absolute_value(ff7_externals.world_update_camera_74E8CE, 0x103)), 512);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.battle_display_text_queue = std::span((battle_text_data*)get_absolute_value(ff7_externals.add_text_to_display_queue, 0x25), 64);",
+"\tff7_externals.battle_display_text_queue = std::span((battle_text_data*)GPTR(get_absolute_value(ff7_externals.add_text_to_display_queue, 0x25)), 64);"
+],
+[
+"ff7_data.h",
+"\tff7_externals.anim_event_queue = std::span((battle_anim_event*)get_absolute_value(ff7_externals.battle_sub_42CBF9, 0x23), 64);",
+"\tff7_externals.anim_event_queue = std::span((battle_anim_event*)GPTR(get_absolute_value(ff7_externals.battle_sub_42CBF9, 0x23)), 64);"
+],
+[
+"ff7_data.h",
+"\tuint32_t* pointer_functions_7C2980 = (uint32_t*)get_absolute_value(sub_434347, 0x19C);",
+"\tuint32_t* pointer_functions_7C2980 = (uint32_t*)GPTR(get_absolute_value(sub_434347, 0x19C));"
+],
+[
+"ff7_opengl.cpp",
+"\tmemcpy_code((uint32_t)ff7_externals.field_models_eye_blink_buffer + 0x58, ff7_redxiii_eye_fix, sizeof(ff7_redxiii_eye_fix) - 1);",
+"\tmemcpy_code((uint32_t)GVA(ff7_externals.field_models_eye_blink_buffer) + 0x58, ff7_redxiii_eye_fix, sizeof(ff7_redxiii_eye_fix) - 1);"
+],
+[
+"ff7_opengl.cpp",
+"\t\tpatch_code_byte((uint32_t)ff7_externals.field_dialog_print_table_632C4E, 0xC);",
+"\t\tpatch_code_byte((uint32_t)GVA(ff7_externals.field_dialog_print_table_632C4E), 0xC);"
+],
+[
+"ff7_opengl.cpp",
+"\t\tpatch_code_byte((uint32_t)ff7_externals.field_dialog_print_table_632C4E + 0x1, 0xC);",
+"\t\tpatch_code_byte((uint32_t)GVA(ff7_externals.field_dialog_print_table_632C4E) + 0x1, 0xC);"
+],
+[
+"ff7_opengl.cpp",
+"\t\tpatch_code_byte((uint32_t)ff7_externals.field_dialog_print_table_632C4E + 0x2, 0xC);",
+"\t\tpatch_code_byte((uint32_t)GVA(ff7_externals.field_dialog_print_table_632C4E) + 0x2, 0xC);"
+],
+[
+"ff7_opengl.cpp",
+"\t\tpatch_code_byte((uint32_t)ff7_externals.field_dialog_print_table_632C4E + 0x3, 0xC);",
+"\t\tpatch_code_byte((uint32_t)GVA(ff7_externals.field_dialog_print_table_632C4E) + 0x3, 0xC);"
+],
+[
+"ff7_opengl.cpp",
+"\t\tpatch_code_byte((uint32_t)ff7_externals.field_dialog_print_table_632C4E + 0x4, 0xC);",
+"\t\tpatch_code_byte((uint32_t)GVA(ff7_externals.field_dialog_print_table_632C4E) + 0x4, 0xC);"
+],
+[
+"exe_data.cpp",
+"            patch_code_uint(ff8_externals.drawpoint_messages, uint32_t(msd));",
+"            patch_code_uint(ff8_externals.drawpoint_messages, GVA(msd));"
+],
+[
+"exe_data.cpp",
+"            patch_code_uint(uint32_t(ff8_externals.card_texts_off_B96504), uint32_t(msd));",
+"            patch_code_uint(GVA(ff8_externals.card_texts_off_B96504), GVA(msd));"
+],
+[
+"exe_data.cpp",
+"            patch_code_uint(uint32_t(ff8_externals.card_texts_off_B96968), uint32_t(msd));",
+"            patch_code_uint(GVA(ff8_externals.card_texts_off_B96968), GVA(msd));"
+],
+[
+"common.cpp",
+"\t\t\t\tmemcpy_code(uint32_t(ff8_externals.archive_path_prefix_field), \"\\\\ff8\\\\data\\\\x\\\\field\\\\\", sizeof(\"\\\\ff8\\\\data\\\\x\\\\field\\\\\"));",
+"\t\t\t\tmemcpy_code(GVA(ff8_externals.archive_path_prefix_field), \"\\\\ff8\\\\data\\\\x\\\\field\\\\\", sizeof(\"\\\\ff8\\\\data\\\\x\\\\field\\\\\"));"
+],
+[
+"common.cpp",
+"\t\t\t\tmemcpy_code(uint32_t(ff8_externals.archive_path_prefix_world), \"\\\\ff8\\\\data\\\\x\\\\world\\\\\", sizeof(\"\\\\ff8\\\\data\\\\x\\\\world\\\\\"));",
+"\t\t\t\tmemcpy_code(GVA(ff8_externals.archive_path_prefix_world), \"\\\\ff8\\\\data\\\\x\\\\world\\\\\", sizeof(\"\\\\ff8\\\\data\\\\x\\\\world\\\\\"));"
+],
+[
+"common.cpp",
+"\t\t\t\t\tmemcpy_code(uint32_t(ff8_externals.archive_path_prefix), archive_path_prefix, strlen(archive_path_prefix) + 1);",
+"\t\t\t\t\tmemcpy_code(GVA(ff8_externals.archive_path_prefix), archive_path_prefix, strlen(archive_path_prefix) + 1);"
+],
+[
+"common.cpp",
+"\t\t\t\t\tmemcpy_code(uint32_t(ff8_externals.archive_path_prefix_menu), archive_path_prefix, strlen(archive_path_prefix) + 1);",
+"\t\t\t\t\tmemcpy_code(GVA(ff8_externals.archive_path_prefix_menu), archive_path_prefix, strlen(archive_path_prefix) + 1);"
+],
+[
+"common.cpp",
+"\t\t\t\t\tmemcpy_code(uint32_t(ff8_externals.archive_path_prefix_battle), archive_path_prefix, strlen(archive_path_prefix) + 1);",
+"\t\t\t\t\tmemcpy_code(GVA(ff8_externals.archive_path_prefix_battle), archive_path_prefix, strlen(archive_path_prefix) + 1);"
+],
+[
+"ff7/multilanguage.cpp",
+"\tauto entry = ascii_translations.find(reinterpret_cast<uint32_t>(text));",
+"\tauto entry = ascii_translations.find(GVA(text));"
+],
+[
+"ff7/multilanguage.cpp",
+"\t\tmemcpy_code(reinterpret_cast<uint32_t>(data::text_buffer), const_cast<char *>(entry->second), std::strlen(entry->second) + 1);",
+"\t\tmemcpy_code(GVA(data::text_buffer), const_cast<char *>(entry->second), std::strlen(entry->second) + 1);"
+],
+[
+"ff7/multilanguage.cpp",
+"\tmemcpy_code(reinterpret_cast<uint32_t>(data::hud2), const_cast<uint8_t (*)[36]>(hud2_records), hud2_size);",
+"\tmemcpy_code(GVA(data::hud2), const_cast<uint8_t (*)[36]>(hud2_records), hud2_size);"
+],
+[
+"ff7/multilanguage.cpp",
+"\tmemcpy_code(reinterpret_cast<uint32_t>(data::hud64), const_cast<uint8_t (*)[36]>(hud64_records), hud64_size);",
+"\tmemcpy_code(GVA(data::hud64), const_cast<uint8_t (*)[36]>(hud64_records), hud64_size);"
+],
+[
+"ff7/multilanguage.cpp",
+"\tmemcpy_code(reinterpret_cast<uint32_t>(data::hud128), const_cast<uint8_t (*)[36]>(hud128_records), hud128_size);",
+"\tmemcpy_code(GVA(data::hud128), const_cast<uint8_t (*)[36]>(hud128_records), hud128_size);"
+],
+[
+"ff7/multilanguage.cpp",
+"\tuint32_t hud2_selected_palette = reinterpret_cast<uint32_t>(data::hud2[data::hud2_palette_rows[language]]) + data::hud_palette_offset;",
+"\tuint32_t hud2_selected_palette = GVA(data::hud2[data::hud2_palette_rows[language]]) + data::hud_palette_offset;"
+],
+[
+"ff7/multilanguage.cpp",
+"\t\t\tuint32_t destination = reinterpret_cast<uint32_t>(table.records[table.selected + copy.value]) + data::hud_rectangle_field_offset;",
+"\t\t\tuint32_t destination = GVA(table.records[table.selected + copy.value]) + data::hud_rectangle_field_offset;"
+],
+[
+"ff7/multilanguage.cpp",
+"\tauto entry = translations.find(reinterpret_cast<uint32_t>(text));",
+"\tauto entry = translations.find(GVA(text));"
+],
+[
+"ff7/multilanguage.cpp",
+"\tmemset_code(reinterpret_cast<uint32_t>(data::text_buffer), 0, sizeof(data::text_buffer));",
+"\tmemset_code(GVA(data::text_buffer), 0, sizeof(data::text_buffer));"
+],
+[
+"ff7/multilanguage.cpp",
+"\tmemcpy_code(reinterpret_cast<uint32_t>(data::text_buffer), const_cast<char *>(entry->second), length + 1);",
+"\tmemcpy_code(GVA(data::text_buffer), const_cast<char *>(entry->second), length + 1);"
+],
+[
+"sfx.cpp",
+"\tconst uint32_t original_table = uint32_t(common_externals.dsound_volume_table);",
+"\tconst uint32_t original_table = GVA(common_externals.dsound_volume_table);"
+],
+[
+"sfx.cpp",
+"\t\tpatch_code_uint(address, uint32_t(volume_table));",
+"\t\tpatch_code_uint(address, GVA(volume_table));"
+],
+[
+"sfx.cpp",
+"\t\t\tpatch_code_uint(uint32_t(common_externals.set_sfx_volume_on_channel) + 0x48 + 1, uint32_t(&real_volume));",
+"\t\t\tpatch_code_uint(uint32_t(common_externals.set_sfx_volume_on_channel) + 0x48 + 1, GVA(&real_volume));"
+],
+[
+"ff7_opengl.cpp",
+"\tif (obj && *(const uint32_t *)(uintptr_t)(obj + 8))",
+"\tif (obj && *(const uint32_t *)GPTR(obj + 8))"
+],
+[
+"ff7_opengl.cpp",
+"\t\tguest::gfn<void()>::from_va(*(const uint32_t *)(uintptr_t)(obj + 8))();",
+"\t\tguest::gfn<void()>::from_va(*(const uint32_t *)GPTR(obj + 8))();"
+],
+[
+"ff7/widescreen.cpp",
+"    if (*(volatile uint8_t *)(uintptr_t)(ff7_externals.battle_sub_5BCF9D + 0x33) == 0x66 &&",
+"    if (*(volatile uint8_t *)GPTR(ff7_externals.battle_sub_5BCF9D + 0x33) == 0x66 &&"
+],
+[
+"ff7/widescreen.cpp",
+"        *(volatile uint8_t *)(uintptr_t)(ff7_externals.battle_sub_5BCF9D + 0x34) == 0xC7)   // FF7Recomp: not replaced by a mod",
+"        *(volatile uint8_t *)GPTR(ff7_externals.battle_sub_5BCF9D + 0x34) == 0xC7)   // FF7Recomp: not replaced by a mod"
+],
+[
+"ff7/battle/animations.cpp",
+"        if (anim && factor > 1) ffnx_smooth_animation((struct anim_header *)(uintptr_t)anim, factor);",
+"        if (anim && factor > 1) ffnx_smooth_animation((struct anim_header *)GPTR(anim), factor);"
+],
+[
+"ff7/battle/animations.cpp",
+"            const uint32_t model = *(const uint32_t *)(uintptr_t)(state + 0xBA8);",
+"            const uint32_t model = *(const uint32_t *)GPTR(state + 0xBA8);"
+],
+[
+"ff7/battle/animations.cpp",
+"            const short idx = *(const short *)(uintptr_t)(state + 0xE);   // runningAnimIdx",
+"            const short idx = *(const short *)GPTR(state + 0xE);   // runningAnimIdx"
+],
+[
+"ff7/battle/animations.cpp",
+"                    const uint32_t arr = *(const uint32_t *)(uintptr_t)(model + 0x14);",
+"                    const uint32_t arr = *(const uint32_t *)GPTR(model + 0x14);"
+],
+[
+"ff7/battle/animations.cpp",
+"                    if (arr) anim = *(const uint32_t *)(uintptr_t)(arr + 4u * (uint32_t)(idx - 0x2C));",
+"                    if (arr) anim = *(const uint32_t *)GPTR(arr + 4u * (uint32_t)(idx - 0x2C));"
+],
+[
+"ff7/battle/animations.cpp",
+"                else if (idx < *(const int *)(uintptr_t)(model + 8))",
+"                else if (idx < *(const int *)GPTR(model + 8))"
+],
+[
+"ff7/battle/animations.cpp",
+"                    const uint32_t arr = *(const uint32_t *)(uintptr_t)(model + 0xC);",
+"                    const uint32_t arr = *(const uint32_t *)GPTR(model + 0xC);"
+],
+[
+"ff7/battle/animations.cpp",
+"                    if (arr) anim = *(const uint32_t *)(uintptr_t)(arr + 4u * (uint32_t)idx);",
+"                    if (arr) anim = *(const uint32_t *)GPTR(arr + 4u * (uint32_t)idx);"
+],
+[
+"ff7/battle/animations.cpp",
+"            if (anim) ffnx_smooth_animation((struct anim_header *)(uintptr_t)anim, factor);",
+"            if (anim) ffnx_smooth_animation((struct anim_header *)GPTR(anim), factor);"
+],
+[
+"ff7/battle/animations.cpp",
+"            if (*(const byte *)(uintptr_t)site == 0xE8 && get_relative_call(site, 0) == ff7_externals.battle_update_3d_model_data)",
+"            if (*(const byte *)GPTR(site) == 0xE8 && get_relative_call(site, 0) == ff7_externals.battle_update_3d_model_data)"
+],
+[
+"ff7/battle/animations.cpp",
+"            if (*(const byte *)(uintptr_t)site == 0xE8 && get_relative_call(site, 0) == ff7_externals.draw_3d_model)",
+"            if (*(const byte *)GPTR(site) == 0xE8 && get_relative_call(site, 0) == ff7_externals.draw_3d_model)"
+],
+[
+"ff7/battle/animations.cpp",
+"            if (*(volatile uint8_t *)(uintptr_t)(ff7_externals.battle_sub_5BCF9D + 0x33) == 0x66 &&",
+"            if (*(volatile uint8_t *)GPTR(ff7_externals.battle_sub_5BCF9D + 0x33) == 0x66 &&"
+],
+[
+"ff7/battle/animations.cpp",
+"                *(volatile uint8_t *)(uintptr_t)(ff7_externals.battle_sub_5BCF9D + 0x34) == 0xC7)   // FF7Recomp: see widescreen.cpp",
+"                *(volatile uint8_t *)GPTR(ff7_externals.battle_sub_5BCF9D + 0x34) == 0xC7)   // FF7Recomp: see widescreen.cpp"
+],
+[
+"ff7/loaders.cpp",
+"\tstruct anim_frame *f0 = (struct anim_frame *)(uintptr_t)(uint32_t)a->anim_frames;",
+"\tstruct anim_frame *f0 = (struct anim_frame *)GPTR((uint32_t)a->anim_frames);"
+],
+[
+"ff7/loaders.cpp",
+"\tstruct anim_frame *src = (struct anim_frame *)(uintptr_t)(uint32_t)a->anim_frames;",
+"\tstruct anim_frame *src = (struct anim_frame *)GPTR((uint32_t)a->anim_frames);"
+],
+[
+"ff7/loaders.cpp",
+"\t\tconst struct anim_frame_header *h0 = (const struct anim_frame_header *)(uintptr_t)(uint32_t)src[k].header;",
+"\t\tconst struct anim_frame_header *h0 = (const struct anim_frame_header *)GPTR((uint32_t)src[k].header);"
+],
+[
+"ff7/loaders.cpp",
+"\t\tconst struct anim_frame_header *h1 = (const struct anim_frame_header *)(uintptr_t)(uint32_t)src[k1].header;",
+"\t\tconst struct anim_frame_header *h1 = (const struct anim_frame_header *)GPTR((uint32_t)src[k1].header);"
+],
+[
+"ff7/loaders.cpp",
+"\t\tconst vector3<float> *b0 = (const vector3<float> *)(uintptr_t)(uint32_t)src[k].data;",
+"\t\tconst vector3<float> *b0 = (const vector3<float> *)GPTR((uint32_t)src[k].data);"
+],
+[
+"ff7/loaders.cpp",
+"\t\tconst vector3<float> *b1 = (const vector3<float> *)(uintptr_t)(uint32_t)src[k1].data;",
+"\t\tconst vector3<float> *b1 = (const vector3<float> *)GPTR((uint32_t)src[k1].data);"
+],
+[
+"ff7/loaders.cpp",
+"\texternal_free((void *)(uintptr_t)(uint32_t)a->frame_data);",
+"\texternal_free((void *)GPTR((uint32_t)a->frame_data));"
+],
+[
+"ff7/loaders.cpp",
+"\texternal_free((void *)(uintptr_t)(uint32_t)a->anim_frames);",
+"\texternal_free((void *)GPTR((uint32_t)a->anim_frames));"
+],
+[
+"ff7/universal_buttons.cpp",
+"  if (!universal_buttons_parse_field_prompt((const byte*)(uintptr_t)buffer, &button, &byte_count))",
+"  if (!universal_buttons_parse_field_prompt((const byte*)GPTR(buffer), &button, &byte_count))"
+],
+[
+"common.cpp",
+"\tffnx_ss_texture_set_destroyed((uint32_t)(uintptr_t)VPTR(texture_set));   // FF7Recomp: save states",
+"\tffnx_ss_texture_set_destroyed(GVA(VPTR(texture_set)));   // FF7Recomp: save states"
+],
+[
+"common.cpp",
+"\t\tffnx_ss_texture_set_created((uint32_t)(uintptr_t)VPTR(texture_set));   // FF7Recomp: save states",
+"\t\tffnx_ss_texture_set_created(GVA(VPTR(texture_set)));   // FF7Recomp: save states"
+],
+[
+"movies.cpp",
+"\t\t\tpatch_code_dword((uint32_t)(uintptr_t)ff7_externals.opening_movie_music_start_frame, ff7r_opening_music_frame * movie_fps_ratio);",
+"\t\t\tpatch_code_dword(GVA(ff7_externals.opening_movie_music_start_frame), ff7r_opening_music_frame * movie_fps_ratio);"
+],
+[
+"ff7/world/world.cpp",
+"            ffnx_recomp::step_mirror(ff7_externals.world_init_variables_74E1E9 + 0x15D, (uint32_t)(uintptr_t)ff7_externals.world_movement_multiplier_DFC480);   // FF7Recomp",
+"            ffnx_recomp::step_mirror(ff7_externals.world_init_variables_74E1E9 + 0x15D, GVA(ff7_externals.world_movement_multiplier_DFC480));   // FF7Recomp"
+],
+[
+"utils.cpp",
+"    const uint8_t *base = (const uint8_t *)(uintptr_t)0x00400000u;",
+"    const uint8_t *base = (const uint8_t *)GPTR(0x00400000u);"
+],
+[
+"ff7_opengl.cpp",
+"\tif (*(const uint8_t *)(uintptr_t)0x68944F == 0xE8 && *(const uint32_t *)(uintptr_t)0x68944B == 0x6893CA)   // FF7Recomp: US 1.02 layout",
+"\tif (*(const uint8_t *)GPTR(0x68944F) == 0xE8 && *(const uint32_t *)GPTR(0x68944B) == 0x6893CA)   // FF7Recomp: US 1.02 layout"
+],
+[
+"ff7_opengl.cpp",
+"\t\t\tif (battle_frame_multiplier >= 8 && !memcmp((const void *)(uintptr_t)0x4322AE, \"\\x03\\x4D\\xF4\", 3))   // FF7Recomp: ATB at the 60 FPS rate",
+"\t\t\tif (battle_frame_multiplier >= 8 && !memcmp((const void *)GPTR(0x4322AE), \"\\x03\\x4D\\xF4\", 3))   // FF7Recomp: ATB at the 60 FPS rate"
+],
+[
+"ff7_data.h",
+"\tff7_externals.swirl_animation = reinterpret_cast<ff7_swirl_animation *>(get_absolute_value(ff7_externals.swirl_enter_sub_401810, 0xE) + 0x112C);",
+"\tff7_externals.swirl_animation = reinterpret_cast<ff7_swirl_animation *>(GPTR(get_absolute_value(ff7_externals.swirl_enter_sub_401810, 0xE) + 0x112C));"
+],
+[
+"ff7/multilanguage.cpp",
+"\t\t\tconst uint8_t *original = reinterpret_cast<const uint8_t *>(address);",
+"\t\t\tconst uint8_t *original = reinterpret_cast<const uint8_t *>(GPTR(address));"
+],
+[
+"ff7/multilanguage.cpp",
+"\t\tconst uint8_t *original = reinterpret_cast<const uint8_t *>(data::wide_speed_args_address);",
+"\t\tconst uint8_t *original = reinterpret_cast<const uint8_t *>(GPTR(data::wide_speed_args_address));"
+],
+[
+"ff7/multilanguage.cpp",
+"\t\t\tif (*reinterpret_cast<const uint8_t *>(address) != 0xE8 || get_relative_call(address, 0) != function.original)",
+"\t\t\tif (*reinterpret_cast<const uint8_t *>(GPTR(address)) != 0xE8 || get_relative_call(address, 0) != function.original)"
+],
+[
+"ff7/battle/battle.cpp",
+"\t\t\tuint32_t flags = *reinterpret_cast<const uint32_t *>(texture_resource);",
+"\t\t\tuint32_t flags = *reinterpret_cast<const uint32_t *>(GPTR(texture_resource));"
+],
+[
+"ff7/battle/battle.cpp",
+"\t\tuint32_t ifrit_ground_flags = *reinterpret_cast<const uint32_t *>(ifrit_resources);",
+"\t\tuint32_t ifrit_ground_flags = *reinterpret_cast<const uint32_t *>(GPTR(ifrit_resources));"
+],
+[
+"ff7/field/field.cpp",
+"        uint32_t* flevel_sizes = reinterpret_cast<uint32_t*>(ff7_externals.field_map_infos + 0xBC);",
+"        uint32_t* flevel_sizes = reinterpret_cast<uint32_t*>(GPTR(ff7_externals.field_map_infos + 0xBC));"
+],
+[
+"ff7/japanese_text.cpp",
+"    reinterpret_cast<byte*>(ff7_externals.current_dialog_string_pointer[WINDOW_ID]), pOutW, pOutH);",
+"    reinterpret_cast<byte*>(GPTR(ff7_externals.current_dialog_string_pointer[WINDOW_ID])), pOutW, pOutH);"
+],
+[
+"ff7/misc.cpp",
+"\t\treinterpret_cast<byte*>(ff7_externals.current_dialog_string_pointer[WINDOW_ID]), field_autosize_state);",
+"\t\treinterpret_cast<byte*>(GPTR(ff7_externals.current_dialog_string_pointer[WINDOW_ID])), field_autosize_state);"
+],
+[
+"ff7/misc.cpp",
+"\t\treinterpret_cast<byte*>(ff7_externals.world_current_dialog_string_pointer[WINDOW_ID]), world_autosize_state);",
+"\t\treinterpret_cast<byte*>(GPTR(ff7_externals.world_current_dialog_string_pointer[WINDOW_ID])), world_autosize_state);"
+],
+[
+"ff7/universal_buttons.cpp",
+"        ff7_externals.current_dialog_string_pointer[window_index]);",
+"        GPTR(ff7_externals.current_dialog_string_pointer[window_index]));"
+],
+[
+"ff7_data.h",
+"\tff7_externals.swirl_grid = reinterpret_cast<vector4<short> (*)[9]>(get_absolute_value(ff7_externals.swirl_enter_sub_401810, 0xE) + 0xC88);",
+"\tff7_externals.swirl_grid = reinterpret_cast<vector4<short> (*)[9]>(GPTR(get_absolute_value(ff7_externals.swirl_enter_sub_401810, 0xE) + 0xC88));"
+]
+]

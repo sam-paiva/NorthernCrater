@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Xcode: per-user state, build products, caches
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+.swiftpm/
+.build/
+Packages/
+
+# Engine build output, if a build is ever run inside the repo
+# (the app itself builds under ~/Library/Application Support/NorthernCrater)
+ff7-recomp-src/
+generated/
+external/
+
+# Game files, lifted code and mods must never be committed
+ff7_en
+ff7_en.exe
+*.iro
+*.7z
+last_run.log
+
+# Editors / tooling
+.idea/
+.vscode/
+*.swp
+.claude/settings.local.json

@@ -1,0 +1,15 @@
+diff --git a/runtime/win32hle/host_lite.c b/runtime/win32hle/host_lite.c
+--- a/runtime/win32hle/host_lite.c
++++ b/runtime/win32hle/host_lite.c
+@@ -123,7 +123,10 @@
+     }
+     return NULL;
+ }
+-recomp_func_t recomp_lookup_manual(uint32_t va) { (void)va; return NULL; }
++/* A host's extra targets for indirect transfers, looked up first (FF7: code a mod's patch put
++ * outside the lifted code, run by the x86 interpreter). */
++recomp_func_t recomp_host_lookup_extra(uint32_t va) __attribute__((weak));
++recomp_func_t recomp_lookup_manual(uint32_t va) { return recomp_host_lookup_extra ? recomp_host_lookup_extra(va) : NULL; }
+ 
+ /* --------------------------------------------------------- shim registry
+  * Each shim gets a synthetic VA in a reserved range that no real image uses. */
