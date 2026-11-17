@@ -45,6 +45,9 @@ Only **"FINAL FANTASY VII" (the new Steam release, folder `FINAL FANTASY VII Ste
 *   A non-obvious Xcode trap: `NorthernCrater/` is a synchronized group, and edits that slice a file by finding the first occurrence of a name have garbled protocol/struct pairs twice; check the result.
 *   Updating the engine means re-vendoring from GJ Materia and re-applying the changes in `engine/NOTICE.md`.
 
+## Releases
+`scripts/make_release.sh [version]` builds an arm64 Release (ad-hoc signed, no developer identity), verifies it and writes `dist/NorthernCrater-<v>-arm64.{dmg,zip,sha256}` (see `docs/RELEASING.md`). The download holds the app and the engine SOURCES only: never ship a built engine or game files. It is not notarized, so Gatekeeper rejects it until the user allows it (the README explains how). Updating the app does not rebuild the engine (the user presses Rebuild Engine).
+
 ## Logo
 The app icon is `NorthernCrater/Assets.xcassets/AppIcon.appiconset/` (its files are WebP data named `.png`; Xcode accepts them). The README uses `docs/logo.png`, a real 512 px PNG copy so it renders everywhere. Refresh it after changing the icon: `sips -s format png --resampleHeightWidth 512 512 NorthernCrater/Assets.xcassets/AppIcon.appiconset/1024-mac.png --out docs/logo.png`.
 

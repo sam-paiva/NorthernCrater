@@ -38,3 +38,6 @@ last_run.log
 .vscode/
 *.swp
 .claude/settings.local.json
+
+# Release artifacts
+dist/

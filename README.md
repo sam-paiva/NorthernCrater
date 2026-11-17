@@ -43,8 +43,8 @@ The game runs as a **native Apple Silicon (arm64)** program. It is built on your
 |---|---|
 | **Mac** | Apple Silicon (M1 or newer). Intel Macs are not supported. |
 | **macOS** | The project's deployment target is **macOS 26.5**, and that is the version it has been built and tested on. On an older macOS you would have to lower the deployment target in Xcode yourself; I have not tried that. |
-| **Xcode** | A recent Xcode (built with 26.6) to compile the app. |
-| **Tools** | Xcode Command Line Tools, plus Homebrew packages `cmake`, `ninja` and `python3`. The app checks for `git`, `cmake`, `ninja`, `python3` and `clang` before building. |
+| **Xcode** | Only if you build the app from source (built with 26.6). The downloaded app does not need it. |
+| **Tools** | Xcode Command Line Tools, plus Homebrew packages `cmake`, `ninja` and `python3`. The app checks for `git`, `cmake`, `ninja`, `python3` and `clang` before building the engine. The engine's own build script says Xcode or the Command Line Tools are enough, but this has not been tried on a Mac without full Xcode. |
 | **Disk space** | About **6 GB** free. The engine build cache was 5.6 GB on the machine this was developed on (most of it downloaded sources). |
 | **Internet** | Needed for the first build (the build downloads about 20 pinned third-party projects: pcrecomp, FFNx, bgfx, SDL3, FFmpeg and others) and for the mod catalog. |
 | **The game** | **FINAL FANTASY VII, the new Steam release**, app ID 3837340, Windows files (see [Getting the game files on a Mac](#getting-the-game-files-on-a-mac)). |
@@ -103,24 +103,52 @@ steamcmd +@sSteamCmdForcePlatformType windows \
 
 ## Install
 
-There is no packaged download yet. You build the app yourself in Xcode.
+There are two ways: download the app (easiest), or build it yourself in Xcode. Either way, first [get the game files](#getting-the-game-files-on-a-mac) and install the tools the engine build needs:
 
-1. **Get the game files** (see [Getting the game files on a Mac](#getting-the-game-files-on-a-mac) above).
-2. **Install the Command Line Tools:**
-   ```sh
-   xcode-select --install
-   ```
-3. **Install the build tools with [Homebrew](https://brew.sh):**
-   ```sh
-   brew install cmake ninja python3
-   ```
-4. **Get the project and open it:**
+```sh
+xcode-select --install
+brew install cmake ninja python3
+```
+
+(The Command Line Tools and [Homebrew](https://brew.sh) come first. The engine is compiled on your Mac the first time you use the app, which is why these tools are needed.)
+
+### Option 1: Download the app
+
+1. Go to this repository's **Releases** page and download `NorthernCrater-<version>-arm64.dmg`.
+2. Open the DMG and drag **NorthernCrater** into **Applications**. Always run it from Applications, not from the DMG or Downloads.
+3. Open it for the first time (see below).
+4. Continue with [First run: build the game](#first-run-build-the-game).
+
+**The download is the app only.** It does **not** contain the game or the game engine. The engine is built on your Mac from your own game files, because it contains code derived from the game and cannot be shared. So even with the download, the first launch needs the 15 to 30 minute build.
+
+#### Opening it the first time
+
+macOS will not open the app straight away and will say it cannot verify it. This is expected: the app is **not signed with a paid Apple developer certificate and not notarized by Apple**, so macOS treats any download of it as unknown. It is signed locally, and nothing in it is hidden: the whole source is in this repository. Open it in one of these ways:
+
+- **From System Settings:** try to open the app and dismiss the warning, then go to **System Settings, Privacy & Security**, scroll down to the message about NorthernCrater and press **Open Anyway**, then confirm.
+- **Or from Terminal**, which removes the "downloaded from the internet" mark:
+  ```sh
+  xattr -dr com.apple.quarantine /Applications/NorthernCrater.app
+  ```
+
+You only need to do this once. Only do it if you downloaded the file from this repository's Releases page.
+
+You can check that your download is intact with the `.sha256` file next to it:
+
+```sh
+shasum -a 256 -c NorthernCrater-<version>-arm64.sha256
+```
+
+### Option 2: Build from source
+
+1. **Install Xcode** (a recent version; the project was built with 26.6).
+2. **Get the project and open it:**
    ```sh
    git clone <this repository>
    cd NorthernCrater
    open NorthernCrater.xcodeproj
    ```
-5. In Xcode, choose the **NorthernCrater** scheme and press **Run** (⌘R). The project signs locally ("Sign to Run Locally"), so you do not need an Apple developer account or team. If you have one and want a signed build, set your team under *Signing & Capabilities*.
+3. In Xcode, choose the **NorthernCrater** scheme and press **Run** (⌘R). The project signs locally ("Sign to Run Locally"), so you do not need an Apple developer account or team. If you have one and want a signed build, set your team under *Signing & Capabilities*.
 
 The app itself installs nothing system-wide: everything it creates lives in your user Library (see [Where things live on disk](#where-things-live-on-disk)), and your Steam folder is only ever read, never written to.
 
@@ -249,6 +277,11 @@ The game **always opens on the title screen**. From there pick New Game or Load.
 - **Do not share the built engine app.** It contains code derived from the game. Share the source, never the build.
 - The Steam folder is **never written to**.
 
+**Download**
+- The downloadable app is **not notarized**, so macOS warns the first time (see [Opening it the first time](#opening-it-the-first-time)).
+- It is for **Apple Silicon** only and contains no game files and no built engine.
+- Updating the app does not rebuild the engine. After you install a new version, press **Rebuild Engine** on the home page to pick up engine changes. Your mods, settings, saves and keyboard layout are kept.
+
 **Build**
 - The first build is long (15 to 30 minutes), needs internet, and uses several GB.
 - The build folder's path must not contain spaces, which is why it lives in `~/Library/Caches/NorthernCrater`. You can delete that folder at any time to reclaim the space; you will have to build again.
@@ -275,6 +308,7 @@ The game **always opens on the title screen**. From there pick New Game or Load.
 
 | Problem | What to try |
 |---|---|
+| macOS says the app "can't be opened", "is damaged" or "cannot be verified" | The downloaded app is not notarized. Follow [Opening it the first time](#opening-it-the-first-time): **Open Anyway** in System Settings, Privacy & Security, or run `xattr -dr com.apple.quarantine /Applications/NorthernCrater.app`. |
 | "Invalid folder" when choosing the game folder | Pick the folder called `FINAL FANTASY VII Steam Edition` that contains `ff7/resources/ff7_1.02/ff7_en` and `ff7/workingdir/data`. |
 | "This is the 2013 Edition" | That version is not supported. Install the new release and choose its folder. Your 2013 saves can still be imported. |
 | Build fails at the start | Make sure `cmake`, `ninja` and `python3` are installed with Homebrew and the Command Line Tools are installed. Run the build again; it continues where it can. |
@@ -318,6 +352,7 @@ The `mods` folder holds links to your mods plus `profile.xml`. The app only crea
 - `CLAUDE.md` is a detailed technical guide to how the pieces fit, the mod and save formats, the engine changes and known issues.
 - `engine/NOTICE.md` lists exactly what was copied from GJ Materia, what was left out and what was changed.
 - Updating the engine means re-vendoring it from GJ Materia and re-applying the changes listed in `engine/NOTICE.md`.
+- **Making a release:** `scripts/make_release.sh [version]` builds an arm64 Release, checks it, and writes a `.dmg`, a `.zip` and a `.sha256` file to `dist/`. See [`docs/RELEASING.md`](docs/RELEASING.md) for publishing it.
 
 ## Credits and license
 
