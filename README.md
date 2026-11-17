@@ -114,7 +114,7 @@ brew install cmake ninja python3
 
 ### Option 1: Download the app
 
-1. Go to this repository's **Releases** page and download `NorthernCrater-<version>-arm64.dmg`.
+1. Go to the [**Releases** page](https://github.com/sam-paiva/NorthernCrater/releases) and download `NorthernCrater-<version>-arm64.dmg`.
 2. Open the DMG and drag **NorthernCrater** into **Applications**. Always run it from Applications, not from the DMG or Downloads.
 3. Open it for the first time (see below).
 4. Continue with [First run: build the game](#first-run-build-the-game).
@@ -144,7 +144,7 @@ shasum -a 256 -c NorthernCrater-<version>-arm64.sha256
 1. **Install Xcode** (a recent version; the project was built with 26.6).
 2. **Get the project and open it:**
    ```sh
-   git clone <this repository>
+   git clone https://github.com/sam-paiva/NorthernCrater.git
    cd NorthernCrater
    open NorthernCrater.xcodeproj
    ```
