@@ -110,6 +110,7 @@ struct LiveGameService: GameManaging {
         env["FF7_LOG_STDERR"] = "1"
         env["FF7_ASPECT"] = String(config.aspectCode)
         env["FF7_SWAP_AB"] = config.swapConfirmCancel ? "1" : "0"
+        env["FF7_TURBO_CONFIRM"] = config.turboConfirm ? "1" : "0"
 
         let process = Process()
         process.executableURL = binaryURL

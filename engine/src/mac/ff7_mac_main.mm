@@ -378,6 +378,15 @@ void set_achievements_panel(bool open) {
     dispatch_async(dispatch_get_main_queue(), ^{ ff7_overlay_set_achievements(open ? 1 : 0); });
 }
 
+// FF7_TURBO_CONFIRM=1 (the app's "hold confirm to repeat"): the game only reacts to the moment confirm goes down,
+// so holding it does nothing. After a short delay, a held confirm (XI_B, keyboard or controller) is released
+// for a moment every 120 ms, which the game sees as a new press. Releasing for 60 ms (not one frame) so a
+// game that polls slower than the display still sees the gap.
+static bool turbo_confirm() {
+    static const bool on = getenv("FF7_TURBO_CONFIRM") && atoi(getenv("FF7_TURBO_CONFIRM")) != 0;
+    return on;
+}
+
 // FF7_SWAP_AB=1 (the app's "swap confirm and cancel"): the controller's A and B buttons trade places.
 static bool swap_confirm_cancel() {
     static const bool on = getenv("FF7_SWAP_AB") && atoi(getenv("FF7_SWAP_AB")) != 0;
@@ -448,6 +457,18 @@ extern "C" int ff7_platform_pad_state(unsigned index, ff7_pad_state *out) {
         return 1;
     }
     out->buttons &= (unsigned short)~held_at_close;       // the button that closed it is not a game press
+
+    if (turbo_confirm()) {                                // NorthernCrater: hold confirm to repeat
+        static std::chrono::steady_clock::time_point confirm_since{};
+        const auto t = std::chrono::steady_clock::now();
+        if (out->buttons & XI_B) {
+            if (confirm_since == std::chrono::steady_clock::time_point{}) confirm_since = t;
+            const auto held = std::chrono::duration_cast<std::chrono::milliseconds>(t - confirm_since).count();
+            if (held >= 350 && (held - 350) % 120 < 60) out->buttons &= (unsigned short)~XI_B;
+        } else {
+            confirm_since = {};
+        }
+    }
 
     // Select+Start held 2 s: back to the launcher
     const auto now = std::chrono::steady_clock::now();

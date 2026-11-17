@@ -39,6 +39,7 @@ bgfx, bx, bimg, SDL3, FFmpeg and others) are fetched at the commits pinned in `t
 This project contains no game code or data and is not affiliated with or endorsed by Square Enix.
 FINAL FANTASY is a trademark of Square Enix. The engine is built on your Mac from your own copy of the game;
 do not share the built app, which contains code derived from the game.
+- `src/mac/ff7_mac_main.mm`: `FF7_TURBO_CONFIRM=1` repeats a held confirm button (the app's "holding confirm repeats it").
 - `src/mac/ff7_mac_main.mm`: `FF7_SWAP_AB=1` exchanges the controller's A and B buttons (the app's "swap confirm and cancel"; keyboard unaffected).
 - `tools/ogg2wav.c` (new, NorthernCrater): decodes Ogg Vorbis to WAV with the libogg/libvorbis sources the build downloads; the app builds it on demand (`build_ogg2wav.sh`) to play mods' sound previews.
 - `tools/hext_manifest.cpp`: defines a stub `g_mem_base`, so the build-time manifest tool links outside the game.

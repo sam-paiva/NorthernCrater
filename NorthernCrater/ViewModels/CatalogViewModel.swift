@@ -12,8 +12,12 @@ final class CatalogViewModel {
     
     var isLoadingFeed: Bool = false
     var downloadProgress: [String: Double] = [:] // mod.id -> 0.0...1.0
+    var pausedDownloads: Set<String> = []        // mod ids
     var errorMessage: String?
     
+    private enum StopReason { case pause, cancel }
+    @ObservationIgnored private var downloadTasks: [String: Task<Void, Never>] = [:]
+    @ObservationIgnored private var stopReasons: [String: StopReason] = [:]
     @ObservationIgnored private let catalogService: any CatalogManaging
     
     init(catalogService: any CatalogManaging = CatalogService()) {
@@ -61,18 +65,69 @@ final class CatalogViewModel {
         guard downloadProgress[mod.id] == nil else { return }
         downloadProgress[mod.id] = 0.01
         errorMessage = nil
-        
-        do {
-            let localIRO = try await catalogService.downloadMod(mod) { value in
-                Task { @MainActor in
-                    self.downloadProgress[mod.id] = value
+        start(mod, into: modManager, after: nil)
+    }
+    
+    func pause(_ mod: CatalogMod) {
+        guard let task = downloadTasks[mod.id], !pausedDownloads.contains(mod.id) else { return }
+        pausedDownloads.insert(mod.id)
+        stopReasons[mod.id] = .pause
+        task.cancel()
+    }
+    
+    func resume(_ mod: CatalogMod, into modManager: ModManagerViewModel) {
+        guard pausedDownloads.contains(mod.id) else { return }
+        pausedDownloads.remove(mod.id)
+        stopReasons[mod.id] = nil
+        // The paused task may still be winding down (flushing its last bytes): wait for it.
+        start(mod, into: modManager, after: downloadTasks[mod.id])
+    }
+    
+    /// Stops the download (running or paused) and deletes the partial file.
+    func cancel(_ mod: CatalogMod) {
+        pausedDownloads.remove(mod.id)
+        if let task = downloadTasks[mod.id] {
+            stopReasons[mod.id] = .cancel
+            task.cancel()
+        } else {
+            catalogService.discardPartialDownload(for: mod)
+            downloadProgress.removeValue(forKey: mod.id)
+        }
+    }
+    
+    private func start(_ mod: CatalogMod, into modManager: ModManagerViewModel, after previous: Task<Void, Never>?) {
+        downloadTasks[mod.id] = Task { [weak self] in
+            await previous?.value
+            guard let self else { return }
+            do {
+                let localIRO = try await self.catalogService.downloadMod(mod) { value in
+                    Task { @MainActor in
+                        if self.downloadProgress[mod.id] != nil { self.downloadProgress[mod.id] = value }
+                    }
+                }
+                modManager.importMods([localIRO])
+                self.finish(mod)
+            } catch {
+                let stopped = error is CancellationError || (error as? URLError)?.code == .cancelled
+                if stopped {
+                    switch self.stopReasons.removeValue(forKey: mod.id) {
+                    case .pause:
+                        self.downloadTasks[mod.id] = nil   // partial file kept, progress stays on screen
+                    default:
+                        self.catalogService.discardPartialDownload(for: mod)
+                        self.finish(mod)
+                    }
+                } else {
+                    self.finish(mod)
+                    self.errorMessage = "Failed to download \(mod.name): \(error.localizedDescription)"
                 }
             }
-            modManager.importMods([localIRO])
-            downloadProgress.removeValue(forKey: mod.id)
-        } catch {
-            downloadProgress.removeValue(forKey: mod.id)
-            errorMessage = "Failed to download \(mod.name): \(error.localizedDescription)"
         }
+    }
+    
+    private func finish(_ mod: CatalogMod) {
+        downloadTasks[mod.id] = nil
+        pausedDownloads.remove(mod.id)
+        downloadProgress.removeValue(forKey: mod.id)
     }
 }

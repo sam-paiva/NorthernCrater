@@ -60,9 +60,13 @@ struct CatalogView: View {
                                 $0.name.localizedCaseInsensitiveCompare(mod.name) == .orderedSame
                             },
                             progress: viewModel.downloadProgress[mod.id],
+                            isPaused: viewModel.pausedDownloads.contains(mod.id),
                             onDownload: {
                                 Task { await viewModel.downloadAndInstall(mod, into: modManager) }
-                            }
+                            },
+                            onPause: { viewModel.pause(mod) },
+                            onResume: { viewModel.resume(mod, into: modManager) },
+                            onCancel: { viewModel.cancel(mod) }
                         )
                     }
                     .listStyle(.inset)
@@ -89,7 +93,11 @@ private struct CatalogModRow: View {
     let mod: CatalogMod
     let isInstalled: Bool
     let progress: Double?
+    let isPaused: Bool
     let onDownload: () -> Void
+    let onPause: () -> Void
+    let onResume: () -> Void
+    let onCancel: () -> Void
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -121,12 +129,24 @@ private struct CatalogModRow: View {
             Spacer()
             
             if let progress {
-                VStack(alignment: .trailing, spacing: 4) {
-                    ProgressView(value: progress)
-                        .frame(width: 90)
-                    Text("\(Int(progress * 100))%")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    VStack(alignment: .trailing, spacing: 4) {
+                        ProgressView(value: progress)
+                            .frame(width: 90)
+                        Text(isPaused ? "Paused • \(Int(progress * 100))%" : "\(Int(progress * 100))%")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Button(action: isPaused ? onResume : onPause) {
+                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                    }
+                    .buttonStyle(.borderless)
+                    .help(isPaused ? "Resume download" : "Pause download")
+                    Button(action: onCancel) {
+                        Image(systemName: "xmark.circle.fill")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Cancel download")
                 }
             } else if isInstalled {
                 Label("Installed", systemImage: "checkmark.circle.fill")

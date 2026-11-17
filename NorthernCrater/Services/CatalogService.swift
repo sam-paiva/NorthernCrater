@@ -23,6 +23,7 @@ enum CatalogError: LocalizedError {
 protocol CatalogManaging {
     func fetchCatalog(from feedURL: URL) async throws -> [CatalogMod]
     func downloadMod(_ mod: CatalogMod, progress: @escaping @Sendable (Double) -> Void) async throws -> URL
+    func discardPartialDownload(for mod: CatalogMod)
 }
 
 struct CatalogService: CatalogManaging {
@@ -59,48 +60,92 @@ struct CatalogService: CatalogManaging {
         return ["iro", "7z", "zip"].contains(ext) ? ext : "iro"
     }
     
+    /// Where the unfinished download of a mod is kept (outside the mods folder so the engine never sees it).
+    static func partialFileURL(for mod: CatalogMod) -> URL {
+        let safeID = mod.id.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")
+        return FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Caches/NorthernCrater/downloads", isDirectory: true)
+            .appendingPathComponent(safeID + ".part")
+    }
+    
+    func discardPartialDownload(for mod: CatalogMod) {
+        try? FileManager.default.removeItem(at: Self.partialFileURL(for: mod))
+    }
+    
+    /// Downloads into a `.part` file. Cancelling the calling Task stops it and KEEPS the partial file
+    /// (that is how pause works): calling again resumes with an HTTP Range request, or restarts from
+    /// zero if the server ignores ranges. Call `discardPartialDownload` to really cancel.
     func downloadMod(_ mod: CatalogMod, progress: @escaping @Sendable (Double) -> Void) async throws -> URL {
         guard let targetURL = mod.downloadURLs.first else {
             throw CatalogError.noValidDownloadMirror
         }
         
         try AppPaths.ensureDirectoriesExist()
+        let fm = FileManager.default
         let safeFileName = mod.name
             .replacingOccurrences(of: "/", with: "-")
             .replacingOccurrences(of: ":", with: "-") + "." + Self.fileExtension(for: targetURL)
         let destinationURL = AppPaths.modsDirectory.appendingPathComponent(safeFileName)
+        let partialURL = Self.partialFileURL(for: mod)
+        try fm.createDirectory(at: partialURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         
-        // Stream download with byte-level progress
-        let (asyncBytes, response) = try await URLSession.shared.bytes(from: targetURL)
-        let expectedLength = response.expectedContentLength > 0
-            ? Double(response.expectedContentLength)
+        var existing = (try? fm.attributesOfItem(atPath: partialURL.path)[.size] as? Int) ?? 0
+        var request = URLRequest(url: targetURL)
+        if existing > 0 { request.setValue("bytes=\(existing)-", forHTTPHeaderField: "Range") }
+        
+        let (asyncBytes, response) = try await URLSession.shared.bytes(for: request)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 200
+        if status == 416 {
+            // The partial file no longer matches the server's file: start over.
+            try? fm.removeItem(at: partialURL)
+            return try await downloadMod(mod, progress: progress)
+        }
+        guard (200..<300).contains(status) else {
+            throw CatalogError.downloadFailed("server returned HTTP \(status)")
+        }
+        if status != 206 { existing = 0 }   // no range support: the whole file is coming again
+        
+        let sent = response.expectedContentLength > 0 ? Double(response.expectedContentLength) : 0
+        let expectedLength = sent > 0
+            ? sent + Double(existing)
             : Double((mod.fileSizeKB ?? 1024) * 1024)
         
-        if FileManager.default.fileExists(atPath: destinationURL.path) {
-            try FileManager.default.removeItem(at: destinationURL)
+        if existing == 0 {
+            fm.createFile(atPath: partialURL.path, contents: nil)
         }
-        FileManager.default.createFile(atPath: destinationURL.path, contents: nil)
-        
-        let handle = try FileHandle(forWritingTo: destinationURL)
+        let handle = try FileHandle(forWritingTo: partialURL)
         defer { try? handle.close() }
+        if existing > 0 { try handle.seekToEnd() } else { try handle.truncate(atOffset: 0) }
         
         var buffer = Data()
         buffer.reserveCapacity(65_536)
-        var receivedBytes: Double = 0
+        var receivedBytes = Double(existing)
         
-        for try await byte in asyncBytes {
-            buffer.append(byte)
-            if buffer.count >= 65_536 {
-                try handle.write(contentsOf: buffer)
-                receivedBytes += Double(buffer.count)
-                buffer.removeAll(keepingCapacity: true)
-                progress(min(receivedBytes / max(expectedLength, 1), 0.99))
+        do {
+            for try await byte in asyncBytes {
+                buffer.append(byte)
+                if buffer.count >= 65_536 {
+                    try handle.write(contentsOf: buffer)
+                    receivedBytes += Double(buffer.count)
+                    buffer.removeAll(keepingCapacity: true)
+                    progress(min(receivedBytes / max(expectedLength, 1), 0.99))
+                }
             }
+        } catch {
+            // Keep what arrived so a resume continues exactly here.
+            if !buffer.isEmpty { try? handle.write(contentsOf: buffer) }
+            throw error
         }
         
         if !buffer.isEmpty {
             try handle.write(contentsOf: buffer)
         }
+        try handle.close()
+        
+        if fm.fileExists(atPath: destinationURL.path) {
+            try fm.removeItem(at: destinationURL)
+        }
+        try fm.moveItem(at: partialURL, to: destinationURL)
         progress(1.0)
         return destinationURL
     }

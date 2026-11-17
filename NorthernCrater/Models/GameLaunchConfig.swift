@@ -25,6 +25,8 @@ struct GameLaunchConfig: Codable, Equatable {
     var invertCameraHorizontal: Bool = false
     /// Exchanges the controller's A and B buttons (confirm <-> cancel). Passed to the engine as FF7_SWAP_AB.
     var swapConfirmCancel: Bool = false
+    /// Holding confirm repeats it (the game only reacts to the press itself). Passed to the engine as FF7_TURBO_CONFIRM.
+    var turboConfirm: Bool = true
     var vsync: Bool = true
     var showFPS: Bool = false
 
@@ -46,6 +48,7 @@ struct GameLaunchConfig: Codable, Equatable {
         invertCameraVertical = try c.decodeIfPresent(Bool.self, forKey: .invertCameraVertical) ?? d.invertCameraVertical
         invertCameraHorizontal = try c.decodeIfPresent(Bool.self, forKey: .invertCameraHorizontal) ?? d.invertCameraHorizontal
         swapConfirmCancel = try c.decodeIfPresent(Bool.self, forKey: .swapConfirmCancel) ?? d.swapConfirmCancel
+        turboConfirm = try c.decodeIfPresent(Bool.self, forKey: .turboConfirm) ?? d.turboConfirm
         vsync = try c.decodeIfPresent(Bool.self, forKey: .vsync) ?? d.vsync
         showFPS = try c.decodeIfPresent(Bool.self, forKey: .showFPS) ?? d.showFPS
     }

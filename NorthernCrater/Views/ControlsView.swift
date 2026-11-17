@@ -192,6 +192,11 @@ private struct ControllerPane: View {
                 Text("Exchanges the controller's A and B buttons (the bottom and the right face button), so the one that cancels confirms and the other way round. The keyboard is not affected.")
                     .font(.caption).foregroundStyle(.secondary)
             }
+            Section("Hold to repeat") {
+                Toggle("Holding confirm repeats it", isOn: $config.turboConfirm)
+                Text("The game only reacts when confirm is pressed, so holding it does nothing (in battle you tap it for each action). With this on, holding confirm presses it again about 8 times a second. Works on keyboard and controller; needs an engine built with this change (press Rebuild Engine once).")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
             Section("Analog sticks") {
                 Toggle("Analog movement (walk in any direction)", isOn: $config.analogControls)
                 Toggle("Walk or run by how far the stick is tilted", isOn: $config.autoRun)
