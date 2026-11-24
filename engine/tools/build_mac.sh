@@ -77,7 +77,12 @@ echo "ok (building for $ARCH)"
 
 step "2/8 toolkits and libraries (pinned, patched)"
 bash tools/fetch_deps_mac.sh | tail -1        # first: setup's FFNx edits touch a library header too
-[ -d external/FFNx/.git ] && [ -f external/.setup-mac-done ] || { bash tools/setup_mac.sh; touch external/.setup-mac-done; }
+# The stamp holds a hash of everything setup applies, so a changed edit script or patch re-runs it
+# (a bare "done" file once hid a fix from every engine that was already built).
+SETUP_HASH="$(cat tools/setup_mac.sh tools/ffnx_*.py tools/ffnx_offset_edits.json patches/pcrecomp/* patches/ffnx/* patches/bgfx/* 2>/dev/null | shasum | cut -d' ' -f1)"
+if [ -d external/FFNx/.git ] && [ "$(cat external/.setup-mac-done 2>/dev/null)" = "$SETUP_HASH" ]; then :; else
+  bash tools/setup_mac.sh; echo "$SETUP_HASH" > external/.setup-mac-done
+fi
 
 step "3/8 your game files"
 if [ -n "$GAME" ]; then python3 -I tools/import_game.py "$GAME"; fi

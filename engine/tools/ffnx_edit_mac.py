@@ -185,6 +185,18 @@ EDITS.append(('ff7/widescreen.cpp',
     }
     // Field fix'''))
 
+# Snowboard minigame: FFNx hooks the game's thiscall 0x732159 with a __fastcall (this in ecx, edx
+# unused). __fastcall is empty here and the override reads every parameter off the guest stack, so
+# `this` and `edx` ate the first two stack arguments and `matrix` received obj_type (the game
+# closed as the board run started: a fault reading guest address 2). `this` is in the guest ecx.
+EDITS.append(('ff7/minigames.cpp',
+'void __fastcall ff7_snowboard_parse_model_vertices(snowboard_this* _this, void* edx, const matrix *matrix, int current_obj, int obj_type, int unk)\n{',
+'void __fastcall ff7_snowboard_parse_model_vertices(const matrix *matrix, int current_obj, int obj_type, int unk)\n{\n  snowboard_this* _this = (snowboard_this*)GPTR(g_ecx);   // thiscall: this is in ecx'))
+
+EDITS.append(('ff7/defs.h',
+'void __fastcall ff7_snowboard_parse_model_vertices(snowboard_this* _this, void* edx, const matrix *matrix, int current_obj, int obj_type, int unk);',
+'void __fastcall ff7_snowboard_parse_model_vertices(const matrix *matrix, int current_obj, int obj_type, int unk);'))
+
 # The frame limiter's sleep: macOS wakes a nanosleep late (timer coalescing), so every frame ran
 # long (57 FPS at 60). The Mac host sleeps to an absolute deadline with mach_wait_until.
 EDITS.append(('ff7/misc.cpp',
